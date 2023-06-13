@@ -1,21 +1,17 @@
 //tela
 const tela = document.getElementById('tela')
 const historico = document.getElementById('historico')
-const res = document.getElementById('equal-btn')
+// const res = document.getElementById('equal-btn')
 const previos = document.getElementById('previos')
 
 let contador = 0
 let contRes = 0
 
-if (contador < 0 || contador === 2) {
-    contador = 0
-}
-
 function insert(num) {
 
     tela.innerHTML += num
     previos.innerHTML = '=' + eval(tela.innerHTML)
-    
+
     if(tela.innerHTML.length > 1){
         historico.innerHTML += tela.innerHTML + '<br>'
     }
@@ -26,7 +22,9 @@ function insert(num) {
 function clean() {
     previos.innerHTML = ''
     tela.innerHTML = ''
+
     contador++
+
     if (contador >= 2) {
         historico.innerHTML = ''
         contador = 0
@@ -35,20 +33,19 @@ function clean() {
 }
 
 function back() {
-    var resultado = document.getElementById('previos').innerHTML;
-    document.getElementById('previos').innerHTML = resultado.substring(0, resultado.length - 1)
-    var resultado = document.getElementById('tela').innerHTML;
-    document.getElementById('tela').innerHTML = resultado.substring(0, resultado.length - 1)
+
+    tela.innerHTML = tela.innerHTML.slice(0, -1);
+    previos.innerHTML = previos.innerHTML.slice(0, -1)
+
     contador = 0
     contRes = 0
 }
 
 function calcular() {
-    var resultado = document.getElementById('tela').innerHTML;
+    var resultado = tela.innerHTML
 
     if (resultado) {
-        tela.innerHTML = eval(resultado)
-        
+        tela.innerHTML = eval(resultado)  
         historico.innerHTML += '=' + tela.innerHTML + '<br>'
     
         contRes++
@@ -62,3 +59,5 @@ function calcular() {
     }
 }
 
+// Adicionar manipuladores de eventos aos botões
+equalBtn.addEventListener('click', calcular);
