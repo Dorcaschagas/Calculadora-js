@@ -2,21 +2,29 @@
 const tela = document.getElementById('tela')
 const historico = document.getElementById('historico')
 const res = document.getElementById('equal-btn')
+const previos = document.getElementById('previos')
 
-let contador = 2
+
+let numerosInseridos = []
+let contador = 0
 let contRes = 0
 
 function insert(num) {
+
     tela.innerHTML += num
+    previos.innerHTML += num
+
+    numerosInseridos.push(num)
+
     contador = 0
     contRes = 0
 }
-//////////////////////////////////////////////////////////
-//limpa o historico se clicado duas vezes "DEL"
+
 if (contador < 0 || contador === 2) {
     contador = 0
 }
 function clean() {
+    previos.innerHTML = ''
     tela.innerHTML = ''
     contador++
     if (contador > 2) {
@@ -25,21 +33,24 @@ function clean() {
         contRes = 0
     }
 }
-//////////////////////////////////////////////////////////
+
 function back() {
+    var resultado = document.getElementById('previos').innerHTML;
+    document.getElementById('previos').innerHTML = resultado.substring(0, resultado.length - 1)
     var resultado = document.getElementById('tela').innerHTML;
     document.getElementById('tela').innerHTML = resultado.substring(0, resultado.length - 1)
     contador = 0
     contRes = 0
 }
-//////////////////////////////////////////////////////////
+
 function calcular() {
-    //recebe valores que estao na tela tela
     var resultado = document.getElementById('tela').innerHTML;
-    //verifica se ha valores em resultado
+
+
     if (resultado) {
         tela.innerHTML = eval(resultado)
-        historico.innerHTML += tela.innerHTML + '<br>'
+        previos.innerHTML = eval(numerosInseridos.join(''))
+
         contRes++
         contador = 0
 
@@ -47,9 +58,7 @@ function calcular() {
             tela.innerHTML = ''
             contRes = 0
         }
-        console.log(contRes)
     }
 }
-//////////////////////////////////////////////////////////
 
 
