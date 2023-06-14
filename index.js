@@ -46,7 +46,7 @@ function clean() {
 function back() {
     tela.innerHTML = tela.innerHTML.slice(0, -1);
     previos.innerHTML = previos.innerHTML.slice(0, -1)
-
+    
     contador = 0
     contRes = 0
 }
@@ -55,36 +55,47 @@ let contRes = 0
 function calcular() {
     var resultado = tela.innerHTML
 
+
     tela.innerHTML = eval(resultado)  
     previos.innerHTML = tela.innerHTML
     historico.innerHTML += '=' + resultado + '<br>'
 
     contRes++
     contador = 0
+
     if (contRes > 2) {
         tela.innerHTML = ''
         previos.innerHTML = ''
         contRes = 0
     }
-    
-    console.log('contador de restultado: ', contRes)
-    // console.log('conntardor : ', contador)
+
 }
+
+const porcentagem = document.getElementById('porcentagem')
+
+function porcent(){
+    var resultado = tela.innerHTML
+    const resPorCent = (eval(resultado) * tela.innerHTML.slice(-1))  / 100
+    tela.innerHTML = resPorCent
+}
+
+porcentagem.addEventListener('click', porcent)
+
 
 
 function ir() {
+    const resultadoTela = document.querySelector('.resultadoTela');
+    resultadoTela.style.height = '25vh'
 
-    const nomesBotoes = ['Botão A', 'Botão B', 'Botão C', 'Botão D', 'Botão E'];
-
-    
     mais.style.background = 'red'
 
     const botoesHorizontal = 5
     const botoesVertical = 6
-
+    
     for (let i = 0; i < botoesHorizontal; i++) {
+        const btnhori = ['', 'lg', 'In', '(', ')'];
         const botao = document.createElement('button');
-        botao.textContent = 'botao' + (i + 1);
+        botao.textContent = btnhori[i];
 
         const coluna = i + 1 ; // Calcula a coluna do 
         const linha = Math.floor(i / botoesHorizontal) + 1; // Calcula a linha do botão
@@ -100,11 +111,12 @@ function ir() {
         };
         
     }
-
-
+    
+    
     for (let i = 0; i < botoesVertical; i++) {
+        const btnVert = ['X¹', 'v¬x', 'X!', '¹/x', 'PI','e'  ]
         const botao = document.createElement('button');
-        botao.textContent = 'botao' + (i + 1);
+        botao.textContent = btnVert[i];
       
         const linha = i + 1; // Calcula a linha do botão
         const coluna = Math.floor(i / botoesVertical) + 1; // Calcula a coluna do botão
@@ -125,5 +137,6 @@ function ir() {
 
 mais.addEventListener('click', ir)
 // mais.addEventListener('click', voltar)
+
 
 

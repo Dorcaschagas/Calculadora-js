@@ -20,14 +20,14 @@ h3{
     position: absolute;
 }
 
-.resultado{
+.resultadoTela{
     /* width: 100%; */
     height: calc(100vh / 2);
     text-align: right; 
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    /* border: 2px solid; */
+    border: 2px solid;
 }
 
 #tela{
@@ -100,7 +100,7 @@ button:hover{
 }
 
 #equal-btn{
-    grid-column: span 2;
+    /* grid-column: span 2; */
     background-color: rgb(233, 159, 47);
 }
 

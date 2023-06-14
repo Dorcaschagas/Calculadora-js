@@ -10,15 +10,15 @@
 <body>
     <div class="calculadora">
         <h3>Calculadora</h3>
-        <div class="resultado">
+        <div class="resultadoTela">
             <div id="historico"></div>
             <div id="tela"></div>
             <div id="previos"></div>
         </div>
-    <div class="container-botoes">
-            <button id="mais" >Ir/Voltar</button>
+        <div class="container-botoes">
             <button onclick="clean()">DEL</button>
             <button onclick="back()" >C</button>
+            <button id="porcentagem">%</button>
             <button onclick="insert('/')" >/</button>
             <button onclick="insert('7')">7</button>
             <button onclick="insert('8')">8</button>
@@ -32,6 +32,7 @@
             <button onclick="insert('2')">2</button>
             <button onclick="insert('3')">3</button>
             <button onclick="insert('+')" >+</button>
+            <button id="mais" >Ir/Voltar</button>
             <button onclick="insert('0')" >0</button>
             <button onclick="insert('.')">.</button>
             <button onclick="calcular('=')" id="equal-btn">=</button>
