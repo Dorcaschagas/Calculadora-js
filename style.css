@@ -30,6 +30,11 @@ h3{
     /* border: 2px solid; */
 }
 
+.novosBotoes{
+    background-color: blue;
+}
+
+
 #tela{
     font-size: 150%;
     font-weight:500 ;

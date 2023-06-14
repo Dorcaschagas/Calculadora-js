@@ -5,6 +5,7 @@ const equalBtn = document.getElementById('equal-btn')
 const previos = document.getElementById('previos')
 const mais = document.getElementById('mais')
 const containerBotoes = document.querySelector('.container-botoes')
+const novosBotoes = document.querySelector('.novosBotoes') 
 
 let contador = 0
 
@@ -84,10 +85,12 @@ porcentagem.addEventListener('click', porcent)
 
 
 function ir() {
+    mais.innerHTML = 'Mais'
+
     const resultadoTela = document.querySelector('.resultadoTela');
     resultadoTela.style.height = '25vh'
 
-    mais.style.background = 'red'
+    mais.style.background = 'white'
 
     const botoesHorizontal = 5
     const botoesVertical = 6
@@ -96,6 +99,8 @@ function ir() {
         const btnhori = ['', 'lg', 'In', '(', ')'];
         const botao = document.createElement('button');
         botao.textContent = btnhori[i];
+        botao.className = 'novosBotoes'
+
 
         const coluna = i + 1 ; // Calcula a coluna do 
         const linha = Math.floor(i / botoesHorizontal) + 1; // Calcula a linha do botão
@@ -107,7 +112,6 @@ function ir() {
         containerBotoes.style.gridTemplateColumns = `repeat(${botoesHorizontal}, 1fr)`; // Define o número de colunas do contêiner
         botao.onclick = function() {
             // Lógica a ser executada quando o botão for clicado
-            console.log('Botão ' + (i + 1) + ' clicado!');
         };
         
     }
@@ -117,6 +121,7 @@ function ir() {
         const btnVert = ['X¹', 'v¬x', 'X!', '¹/x', 'PI','e'  ]
         const botao = document.createElement('button');
         botao.textContent = btnVert[i];
+        botao.className = 'novosBotoes'
       
         const linha = i + 1; // Calcula a linha do botão
         const coluna = Math.floor(i / botoesVertical) + 1; // Calcula a coluna do botão
@@ -131,12 +136,24 @@ function ir() {
             // Lógica a ser executada quando o botão for clicado
         };
     }
-    
-    
+
+    mais.addEventListener('click', voltar)
+}
+
+function voltar(){
+    mais.innerHTML = 'Voltar';
+    mais.style.background = 'red';
+
+    novosBotoes.style.background = 'red'
+
+    mais.removeEventListener('click', voltar); // Remove o listener da função voltar;
+
 }
 
 mais.addEventListener('click', ir)
-// mais.addEventListener('click', voltar)
+mais.addEventListener('click', voltar)
+
+
 
 
 
