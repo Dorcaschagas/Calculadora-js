@@ -5,7 +5,6 @@ const equalBtn = document.getElementById('equal-btn')
 const previos = document.getElementById('previos')
 const mais = document.getElementById('mais')
 const containerBotoes = document.querySelector('.container-botoes')
-const novosBotoes = document.querySelector('.novosBotoes') 
 
 let contador = 0
 
@@ -83,8 +82,14 @@ function porcent(){
 porcentagem.addEventListener('click', porcent)
 
 
-
+let contIr = 0
 function ir() {
+    
+    if(contIr === 2){
+        contIr = 0
+    }
+
+    contIr++
     mais.innerHTML = 'Mais'
 
     const resultadoTela = document.querySelector('.resultadoTela');
@@ -101,7 +106,6 @@ function ir() {
         botao.textContent = btnhori[i];
         botao.className = 'novosBotoes'
 
-
         const coluna = i + 1 ; // Calcula a coluna do 
         const linha = Math.floor(i / botoesHorizontal) + 1; // Calcula a linha do botão
     
@@ -110,18 +114,27 @@ function ir() {
         botao.style.gridRow = linha; // Define a posição da linha do botão
         botao.style.gridColumn = coluna; // Define a posição da coluna do botão
         containerBotoes.style.gridTemplateColumns = `repeat(${botoesHorizontal}, 1fr)`; // Define o número de colunas do contêiner
-        botao.onclick = function() {
-            // Lógica a ser executada quando o botão for clicado
-        };
-        
+
+        if(contIr === 1){
+            mais.innerHTML = 'Voltar';
+        }else if(contIr >= 2){
+            const botoes = document.getElementsByClassName('novosBotoes');
+            while (botoes.length > 0) {
+            botoes[0].parentNode.removeChild(botoes[0]);
+            containerBotoes.style.gridTemplateRows = 'repeat(5, 1fr)'
+            containerBotoes.style.gridTemplateColumns = 'repeat(4, 1fr)'
+            }
+        }else{
+            mais.innerHTML = 'Mais';
+        }
     }
-    
     
     for (let i = 0; i < botoesVertical; i++) {
         const btnVert = ['X¹', 'v¬x', 'X!', '¹/x', 'PI','e'  ]
         const botao = document.createElement('button');
         botao.textContent = btnVert[i];
         botao.className = 'novosBotoes'
+
       
         const linha = i + 1; // Calcula a linha do botão
         const coluna = Math.floor(i / botoesVertical) + 1; // Calcula a coluna do botão
@@ -131,27 +144,25 @@ function ir() {
         botao.style.gridRow = linha; // Define a posição da linha do botão
         botao.style.gridColumn = coluna; // Define a posição da coluna do botão
         containerBotoes.style.gridTemplateRows = `repeat(${botoesVertical}, 1fr)`; // Define o número de linhas do contêiner
-        
-        botao.onclick = function() {
-            // Lógica a ser executada quando o botão for clicado
-        };
+
+        if(contIr === 1){
+            mais.innerHTML = 'Voltar';
+        }else if(contIr >= 2){
+            const botoes = document.getElementsByClassName('novosBotoes');
+            while (botoes.length > 0) {
+            botoes[0].parentNode.removeChild(botoes[0]);
+            containerBotoes.style.gridTemplateRows = 'repeat(5, 1fr)'
+            containerBotoes.style.gridTemplateColumns = 'repeat(4, 1fr)'
+            }
+        }else{
+            mais.innerHTML = 'Mais';
+        }
     }
-
-    mais.addEventListener('click', voltar)
+    console.log(contIr)
 }
-
-function voltar(){
-    mais.innerHTML = 'Voltar';
-    mais.style.background = 'red';
-
-    novosBotoes.style.background = 'red'
-
-    mais.removeEventListener('click', voltar); // Remove o listener da função voltar;
-
-}
+console.log(contIr)
 
 mais.addEventListener('click', ir)
-mais.addEventListener('click', voltar)
 
 
 
