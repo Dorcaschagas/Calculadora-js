@@ -1,13 +1,24 @@
 //tela
 const tela = document.getElementById('tela')
 const historico = document.getElementById('historico')
-// const res = document.getElementById('equal-btn')
+const equalBtn = document.getElementById('equal-btn')
 const previos = document.getElementById('previos')
+const mais = document.getElementById('mais')
+const containerBotoes = document.querySelector('.container-botoes')
 
 let contador = 0
-let contRes = 0
 
 function insert(num) {
+
+    const ultimoValor = tela.innerHTML.slice(-1)
+
+    if(ultimoValor === '/' || ultimoValor === '*' || ultimoValor === '-' || ultimoValor === '+'){
+        if(isNaN(num)){
+            return
+        }
+    }else if(tela.innerHTML === '' && (num === '/' || num === '*' || num === '+')){
+        return
+    }
 
     tela.innerHTML += num
     previos.innerHTML = '=' + eval(tela.innerHTML)
@@ -33,7 +44,6 @@ function clean() {
 }
 
 function back() {
-
     tela.innerHTML = tela.innerHTML.slice(0, -1);
     previos.innerHTML = previos.innerHTML.slice(0, -1)
 
@@ -41,23 +51,79 @@ function back() {
     contRes = 0
 }
 
+let contRes = 0
 function calcular() {
     var resultado = tela.innerHTML
 
-    if (resultado) {
-        tela.innerHTML = eval(resultado)  
-        historico.innerHTML += '=' + tela.innerHTML + '<br>'
-    
-        contRes++
-        contador = 0
+    tela.innerHTML = eval(resultado)  
+    previos.innerHTML = tela.innerHTML
+    historico.innerHTML += '=' + resultado + '<br>'
 
-        if (contRes === 2) {
-            tela.innerHTML = ''
-            previos.innerHTML = ''
-            contRes = 0
-        }
+    contRes++
+    contador = 0
+    if (contRes > 2) {
+        tela.innerHTML = ''
+        previos.innerHTML = ''
+        contRes = 0
     }
+    
+    console.log('contador de restultado: ', contRes)
+    // console.log('conntardor : ', contador)
 }
 
-// Adicionar manipuladores de eventos aos botões
-equalBtn.addEventListener('click', calcular);
+
+function ir() {
+
+    const nomesBotoes = ['Botão A', 'Botão B', 'Botão C', 'Botão D', 'Botão E'];
+
+    
+    mais.style.background = 'red'
+
+    const botoesHorizontal = 5
+    const botoesVertical = 6
+
+    for (let i = 0; i < botoesHorizontal; i++) {
+        const botao = document.createElement('button');
+        botao.textContent = 'botao' + (i + 1);
+
+        const coluna = i + 1 ; // Calcula a coluna do 
+        const linha = Math.floor(i / botoesHorizontal) + 1; // Calcula a linha do botão
+    
+        containerBotoes.appendChild(botao)
+    
+        botao.style.gridRow = linha; // Define a posição da linha do botão
+        botao.style.gridColumn = coluna; // Define a posição da coluna do botão
+        containerBotoes.style.gridTemplateColumns = `repeat(${botoesHorizontal}, 1fr)`; // Define o número de colunas do contêiner
+        botao.onclick = function() {
+            // Lógica a ser executada quando o botão for clicado
+            console.log('Botão ' + (i + 1) + ' clicado!');
+        };
+        
+    }
+
+
+    for (let i = 0; i < botoesVertical; i++) {
+        const botao = document.createElement('button');
+        botao.textContent = 'botao' + (i + 1);
+      
+        const linha = i + 1; // Calcula a linha do botão
+        const coluna = Math.floor(i / botoesVertical) + 1; // Calcula a coluna do botão
+      
+        containerBotoes.appendChild(botao);
+      
+        botao.style.gridRow = linha; // Define a posição da linha do botão
+        botao.style.gridColumn = coluna; // Define a posição da coluna do botão
+        containerBotoes.style.gridTemplateRows = `repeat(${botoesVertical}, 1fr)`; // Define o número de linhas do contêiner
+        
+        botao.onclick = function() {
+            // Lógica a ser executada quando o botão for clicado
+        };
+    }
+    
+    
+}
+
+mais.addEventListener('click', ir)
+// mais.addEventListener('click', voltar)
+
+
