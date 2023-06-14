@@ -84,7 +84,7 @@ porcentagem.addEventListener('click', porcent)
 
 let contIr = 0
 function ir() {
-    
+
     if(contIr === 2){
         contIr = 0
     }
@@ -121,6 +121,7 @@ function ir() {
             const botoes = document.getElementsByClassName('novosBotoes');
             while (botoes.length > 0) {
             botoes[0].parentNode.removeChild(botoes[0]);
+            resultadoTela.style.height = '50vh'
             containerBotoes.style.gridTemplateRows = 'repeat(5, 1fr)'
             containerBotoes.style.gridTemplateColumns = 'repeat(4, 1fr)'
             }
