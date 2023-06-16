@@ -1,34 +1,54 @@
-//tela
-const tela = document.getElementById('tela')
 const historico = document.getElementById('historico')
 const equalBtn = document.getElementById('equal-btn')
 const previos = document.getElementById('previos')
 const mais = document.getElementById('mais')
 const containerBotoes = document.querySelector('.container-botoes')
 
+
+function insert(value) {
+    const tela = document.getElementById('tela');
+    tela.innerHTML += value;
+}
+
+
+
 let contador = 0
 
-function insert(num) {
+
+const num = document.getElementsByClassName('number')
+
+for (let i = 0; i < num.length; i++) {
+    num[i].addEventListener('click', numClick)
+}
+
+function numClick(event) {
+    const button = event.target
+    const operator = button.dataset.operator
+    const number = button.dataset.number
 
     const ultimoValor = tela.innerHTML.slice(-1)
 
-    if(ultimoValor === '/' || ultimoValor === '*' || ultimoValor === '-' || ultimoValor === '+'){
-        if(isNaN(num)){
-            return
+    if (ultimoValor === '/' || ultimoValor === '*' || ultimoValor === '-' || ultimoValor === '+') {
+        if (isNaN(number)) {
+            // alert('operator')
+            return;
         }
-    }else if(tela.innerHTML === '' && (num === '/' || num === '*' || num === '+')){
-        return
+    } else if (ultimoValor === '' && (operator === '/' || operator === '*' || operator === '+')) {
+        return;
     }
 
-    tela.innerHTML += num
-    previos.innerHTML = '=' + eval(tela.innerHTML)
+    if (operator) {
+        insert(operator)
+    }
 
-    if(tela.innerHTML.length > 1){
-        historico.innerHTML += tela.innerHTML + '<br>'
+    if (number) {
+        insert(number)
+        previos.innerHTML = '=' + eval(tela.innerHTML)
     }
     contador = 0
     contRes = 0
 }
+
 
 function clean() {
     previos.innerHTML = ''
@@ -46,7 +66,7 @@ function clean() {
 function back() {
     tela.innerHTML = tela.innerHTML.slice(0, -1);
     previos.innerHTML = previos.innerHTML.slice(0, -1)
-    
+
     contador = 0
     contRes = 0
 }
@@ -56,14 +76,15 @@ function calcular() {
     var resultado = tela.innerHTML
 
 
-    tela.innerHTML = eval(resultado)  
+    tela.innerHTML = eval(resultado)
     previos.innerHTML = tela.innerHTML
     historico.innerHTML += '=' + resultado + '<br>'
+    historico.innerHTML += '=' + eval(resultado)
 
     contRes++
     contador = 0
 
-    if (contRes > 2) {
+    if (contRes === 2) {
         tela.innerHTML = ''
         previos.innerHTML = ''
         contRes = 0
@@ -71,101 +92,56 @@ function calcular() {
 
 }
 
-const porcentagem = document.getElementById('porcentagem')
-
-function porcent(){
-    var resultado = tela.innerHTML
-    const resPorCent = (eval(resultado) * tela.innerHTML.slice(-1))  / 100
-    tela.innerHTML = resPorCent
-}
-
-porcentagem.addEventListener('click', porcent)
-
-
 let contIr = 0
-function ir() {
+document.getElementById('mais').addEventListener('click', () => {
 
-    if(contIr === 2){
-        contIr = 0
+        const resultadoTela = document.querySelector('.resultadoTela');
+        resultadoTela.style.height = '25vh'
+
+    if (contIr >= 1) {
+        mais.innerHTML = 'Mais'
+
+    } else {
+        mais.innerHTML = 'voltar'
     }
-
     contIr++
-    mais.innerHTML = 'Mais'
+    contIr > 1 ? contIr = 0 : null
 
-    const resultadoTela = document.querySelector('.resultadoTela');
-    resultadoTela.style.height = '25vh'
+    const botoesHorizontal = 5;
+    const botoesVertical = 6;
 
-    mais.style.background = 'white'
+    const btnhori = ['', 'lg', 'In', '(', ')'];
+    const btnVert = ['X¹', 'v¬x', 'X!', '¹/x', 'PI', 'e'];
 
-    const botoesHorizontal = 5
-    const botoesVertical = 6
-    
-    for (let i = 0; i < botoesHorizontal; i++) {
-        const btnhori = ['', 'lg', 'In', '(', ')'];
-        const botao = document.createElement('button');
-        botao.textContent = btnhori[i];
-        botao.className = 'novosBotoes'
-
-        const coluna = i + 1 ; // Calcula a coluna do 
-        const linha = Math.floor(i / botoesHorizontal) + 1; // Calcula a linha do botão
-    
-        containerBotoes.appendChild(botao)
-    
-        botao.style.gridRow = linha; // Define a posição da linha do botão
-        botao.style.gridColumn = coluna; // Define a posição da coluna do botão
-        containerBotoes.style.gridTemplateColumns = `repeat(${botoesHorizontal}, 1fr)`; // Define o número de colunas do contêiner
-
-        if(contIr === 1){
-            mais.innerHTML = 'Voltar';
-        }else if(contIr >= 2){
-            const botoes = document.getElementsByClassName('novosBotoes');
-            while (botoes.length > 0) {
-            botoes[0].parentNode.removeChild(botoes[0]);
-            resultadoTela.style.height = '50vh'
-            containerBotoes.style.gridTemplateRows = 'repeat(5, 1fr)'
-            containerBotoes.style.gridTemplateColumns = 'repeat(4, 1fr)'
-            }
-        }else{
-            mais.innerHTML = 'Mais';
-        }
-    }
-    
     for (let i = 0; i < botoesVertical; i++) {
-        const btnVert = ['X¹', 'v¬x', 'X!', '¹/x', 'PI','e'  ]
-        const botao = document.createElement('button');
-        botao.textContent = btnVert[i];
-        botao.className = 'novosBotoes'
+        for (let j = 0; j < botoesHorizontal; j++) {
+            const botao = document.createElement('button');
+            botao.className = 'novosBotoes';
 
-      
-        const linha = i + 1; // Calcula a linha do botão
-        const coluna = Math.floor(i / botoesVertical) + 1; // Calcula a coluna do botão
-      
-        containerBotoes.appendChild(botao);
-      
-        botao.style.gridRow = linha; // Define a posição da linha do botão
-        botao.style.gridColumn = coluna; // Define a posição da coluna do botão
-        containerBotoes.style.gridTemplateRows = `repeat(${botoesVertical}, 1fr)`; // Define o número de linhas do contêiner
-
-        if(contIr === 1){
-            mais.innerHTML = 'Voltar';
-        }else if(contIr >= 2){
-            const botoes = document.getElementsByClassName('novosBotoes');
-            while (botoes.length > 0) {
-            botoes[0].parentNode.removeChild(botoes[0]);
-            containerBotoes.style.gridTemplateRows = 'repeat(5, 1fr)'
-            containerBotoes.style.gridTemplateColumns = 'repeat(4, 1fr)'
+            if (i === 0) {
+                botao.textContent = btnhori[j];
+                botao.style.gridRow = 1;
+                botao.style.gridColumn = j + 1;
+                containerBotoes.style.gridTemplateColumns = `repeat(${botoesHorizontal}, 1fr)`;
+            } else {
+                botao.textContent = btnVert[i - 1];
+                botao.style.gridRow = i + 1;
+                botao.style.gridColumn = 1;
+                containerBotoes.style.gridTemplateRows = `repeat(${botoesVertical}, 1fr)`;
             }
-        }else{
-            mais.innerHTML = 'Mais';
+            containerBotoes.appendChild(botao);
+
+
+            if (contIr === 0) {
+                resultadoTela.style.height = '50vh'
+                const botoes = document.getElementsByClassName('novosBotoes');
+                while (botoes.length > 0) {
+                    botoes[0].parentNode.removeChild(botoes[0]);
+                    containerBotoes.style.gridTemplateRows = 'repeat(5, 1fr)'
+                    containerBotoes.style.gridTemplateColumns = 'repeat(4, 1fr)'
+                }
+            }
         }
     }
-    console.log(contIr)
-}
-console.log(contIr)
 
-mais.addEventListener('click', ir)
-
-
-
-
-
+})
