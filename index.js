@@ -3,6 +3,8 @@ const equalBtn = document.getElementById('equal-btn')
 const previos = document.getElementById('previos')
 const mais = document.getElementById('mais')
 const containerBotoes = document.querySelector('.container-botoes')
+const histFixo = document.getElementById('historicoFixo')
+const conteudoHistfixo = document.getElementById('conteudoHistfixo')
 let parents = 0
 
 function insert(value) {
@@ -73,16 +75,24 @@ function back() {
     contador = 0
     contRes = 0
 }
+
+let valorHist = ''
 let contRes = 0
-let historicoFixo = ''
 function calcular() {
     var resultado = tela.innerHTML
     tela.innerHTML = eval(resultado)
     previos.innerHTML = tela.innerHTML
     historico.innerHTML += '=' + resultado + '<br>'
     historico.innerHTML += '=' + eval(resultado)
-    historicoFixo = historico.innerHTML
-    localStorage.getItem(historicoFixo, historico) || null;
+
+    if(historico.innerHTML !== ''){
+        valorHist = historico.innerHTML
+    }else{
+        valorHist = null
+    }
+
+    console.log(valorHist)
+    localStorage.getItem(valorHist, historico) || null;
     contRes++
     contador = 0
     if (contRes === 2) {
@@ -138,8 +148,10 @@ document.getElementById('mais').addEventListener('click', () => {
                     botao.addEventListener('click', botao00click)
                     let click = 0
                     function botao00click() {
+
+                        conteudoHistfixo.innerHTML = valorHist
                         click++
-                        Object.assign(historico.style, {
+                        Object.assign(histFixo.style, {
                             background: 'grey',
                             width: '50%',
                             height: '100vh',
@@ -149,15 +161,16 @@ document.getElementById('mais').addEventListener('click', () => {
                             position: 'absolute',
                             'z-index': '2'
                         })
-                        historico.innerHTML = `${historicoFixo}`
                         click > 1 ? click = 0 : null
                         if (click === 0) {
-                            Object.assign(historico.style, {
+                            conteudoHistfixo.innerHTML = ''
+                            Object.assign(histFixo.style, {
                                 background: 'none',
                                 height: '20vh',
                                 right: '0',
-                                top: '5%',
+                                // top: '50px',
                                 color: 'black'
+
                             })
                         }
                     }
