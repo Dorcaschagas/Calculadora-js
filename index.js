@@ -132,6 +132,7 @@ document.getElementById('mais').addEventListener('click', () => {
                 botao.style.gridRow = 1;
                 botao.style.gridColumn = j + 1;
                 containerBotoes.style.gridTemplateColumns = `repeat(${botoesHorizontal}, 1fr)`;
+    
                 if (i === 0 && j === 0) {
                     botao00 = botao;
                     botao.addEventListener('click', botao00click)
@@ -141,11 +142,12 @@ document.getElementById('mais').addEventListener('click', () => {
                         Object.assign(historico.style, {
                             background: 'grey',
                             width: '50%',
-                            height: '94vh',
+                            height: '100vh',
                             right: '0',
                             top: '0',
                             color: 'black',
-                            position: 'absolute'
+                            position: 'absolute',
+                            'z-index': '2'
                         })
                         historico.innerHTML = `${historicoFixo}`
                         click > 1 ? click = 0 : null
