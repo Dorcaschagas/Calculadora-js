@@ -18,25 +18,42 @@ function numClick(event) {
     const button = event.target
     const operator = button.dataset.operador
     const number = button.dataset.number
+
     const ultimoValor = tela.innerHTML.slice(-1)
+
     if (ultimoValor === '/' || ultimoValor === '*' || ultimoValor === '-' || ultimoValor === '+') {
         if (isNaN(number)) {
             return;
         }
     } else if (ultimoValor === '' && (operator === '/' || operator === '*' || operator === '+')) {
         return;
-    } else if (ultimoValor === '(' && (operator === '/' || operator === '*' || operator === '+')){
+    } else if (ultimoValor === '(' && (operator === '/' || operator === '*' || operator === '+')) {
         return;
     }
     if (number) {
         insert(number)
-        previos.innerHTML = '=' + eval(tela.innerHTML)
-    }else if (operator) {
+        previos.innerHTML = eval(tela.innerHTML)
+    } else if (operator) {
         insert(operator)
     }
-    // document.getElementById('porcentagem').addEventListener('click', () => {
-
-    // })
+    let expressao = tela.innerHTML;
+    // Expressão regular para encontrar números na string
+    let regexNumeros = /\d+(\.\d+)?/g;
+    let numeros = expressao.match(regexNumeros);
+    document.getElementById('porcentagem').addEventListener('click', () => {
+        let penultimo = 0
+        if (numeros.length >= 2) {
+            penultimo = numeros[numeros.length - 2];
+        }
+        let numeroFim = parseFloat(numeros.slice(-1)[0]);
+        penultimo = parseFloat(penultimo);
+        let porcentagem = (penultimo * numeroFim) / 100;
+        let porcentagemFormatada = porcentagem.toFixed(2);
+        let TelaConteudo = tela.innerHTML;
+        let novoConteudo = TelaConteudo.replace(/\d+(\.\d+)?$/, '') + porcentagemFormatada;
+        tela.innerHTML = novoConteudo;
+        previos.innerHTML = eval(tela.innerHTML);
+    })
     contador = 0
     contRes = 0
 }
@@ -76,8 +93,8 @@ function calcular() {
 }
 let contIr = 0
 document.getElementById('mais').addEventListener('click', () => {
-        const resultadoTela = document.querySelector('.resultadoTela');
-        resultadoTela.style.height = '25vh'
+    const resultadoTela = document.querySelector('.resultadoTela');
+    resultadoTela.style.height = '25vh'
     if (contIr >= 1) {
         mais.innerHTML = 'Mais'
 
@@ -86,23 +103,23 @@ document.getElementById('mais').addEventListener('click', () => {
     }
     contIr++
     contIr > 1 ? contIr = 0 : null
-let botao00;
+    let botao00;
     const botoesHorizontal = 5;
     const botoesVertical = 6;
     const btnHori = {
         zero: ' ',
-        primero:'b',
-        segundo:'c',
-        terceiro:'(',
-        quarto:')'
+        primero: ' ',
+        segundo: ' ',
+        terceiro: '(',
+        quarto: ')'
     }
     const btnVert = {
         zero: ' ',
-        primero:'b',
-        segundo:'c',
-        terceiro:'d',
-        quarto:'e',
-        quinto:'f'
+        primero: ' ',
+        segundo: ' ',
+        terceiro: ' ',
+        quarto: ' ',
+        quinto: ' '
     }
     for (let i = 0; i < botoesVertical; i++) {
         for (let j = 0; j < botoesHorizontal; j++) {
@@ -117,11 +134,11 @@ let botao00;
                 containerBotoes.style.gridTemplateColumns = `repeat(${botoesHorizontal}, 1fr)`;
                 if (i === 0 && j === 0) {
                     botao00 = botao;
-                    botao.addEventListener('click',botao00click )
+                    botao.addEventListener('click', botao00click)
                     let click = 0
-                    function botao00click(){
+                    function botao00click() {
                         click++
-                        Object.assign(historico.style,{
+                        Object.assign(historico.style, {
                             background: 'grey',
                             width: '50%',
                             height: '94vh',
@@ -131,9 +148,9 @@ let botao00;
                             position: 'absolute'
                         })
                         historico.innerHTML = `${historicoFixo}`
-                        click > 1? click = 0 : null
-                        if(click === 0){
-                            Object.assign(historico.style,{
+                        click > 1 ? click = 0 : null
+                        if (click === 0) {
+                            Object.assign(historico.style, {
                                 background: 'none',
                                 height: '20vh',
                                 right: '0',
@@ -151,7 +168,7 @@ let botao00;
                 botao.style.gridColumn = 1;
                 containerBotoes.style.gridTemplateRows = `repeat(${botoesVertical}, 1fr)`;
             }
-            if(i === 0 && j === 0){
+            if (i === 0 && j === 0) {
                 const icone = document.createElement('i')
                 icone.className = 'fas fa-clock'
                 botao.appendChild(icone)
@@ -166,25 +183,24 @@ let botao00;
                     containerBotoes.style.gridTemplateColumns = 'repeat(4, 1fr)'
                 }
             }
-            if(i === 0 && j === 3){
+            if (i === 0 && j === 3) {
                 botao.setAttribute('data-operador', '(')
                 const parentesesAb = botao.dataset.operador
-                botao.addEventListener('click', () =>{
+                botao.addEventListener('click', () => {
                     insert(parentesesAb)
                     parents++
-                    console.log(parents)
-                })  
-            } else if(i === 0 && j === 4){
+                })
+            } else if (i === 0 && j === 4) {
                 botao.setAttribute('data-operador', ')')
                 const parentesesfe = botao.dataset.operador
-                botao.addEventListener('click', () =>{
-                    insert(parentesesfe)
-                    parents--
-                    if(parents <= 0){
-                        console.log('igual a 0')
+                botao.addEventListener('click', () => {
+
+                    if (parents > 0) {
+                        insert(parentesesfe)
+                        parents--
+                    } else {
                         return;
                     }
-                    console.log(parents)
                 })
             }
         }
