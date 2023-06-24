@@ -18,10 +18,12 @@ for (let i = 0; i < num.length; i++) {
     num[i].addEventListener('click', numClick)
 }
 
+let numberParent = ''
 function numClick(event) {
     const button = event.target
     const operator = button.dataset.operador
     const number = button.dataset.number
+    numberParent = number
     const ultimoValor = tela.innerHTML.slice(-1)
     if (ultimoValor === '/' || ultimoValor === '*' || ultimoValor === '-' || ultimoValor === '+') {
         if (isNaN(number)) {
@@ -74,7 +76,13 @@ function clean() {
 
 function back() {
     tela.innerHTML = tela.innerHTML.slice(0, -1);
+    if(tela.innerHTML.slice(-1) === '('){
+        parents--
+        console.log(parents)
+    }
     previos.innerHTML = previos.innerHTML.slice(0, -1)
+    // console.log(innerHTML = previos.innerHTML.slice(0, -1))
+
     contador = 0
     contRes = 0
 }
@@ -85,7 +93,7 @@ let receptor = ''
 function calcular() {
     contRes++
     var resultado = ''
-    if(tela.innerHTML !== ''){
+    if (tela.innerHTML !== '') {
         resultado = tela.innerHTML
         tela.innerHTML = eval(resultado)
     }
@@ -99,7 +107,7 @@ function calcular() {
     } else {
         valorHist = null
     }
-    if(tela.innerHTML === ''){
+    if (tela.innerHTML === '') {
         historico.innerHTML = ''
     }
     localStorage.getItem(valorHist, historico) || null;
@@ -123,23 +131,22 @@ document.getElementById('mais').addEventListener('click', () => {
     }
     contIr++
     contIr > 1 ? contIr = 0 : null
-    let botao00;
     const botoesHorizontal = 5;
     const botoesVertical = 6;
     const btnHori = {
         zero: ' ',
-        primero: ' ',
-        segundo: ' ',
+        primero: '½',
+        segundo: '¼',
         terceiro: '(',
         quarto: ')'
     }
     const btnVert = {
         zero: ' ',
-        primero: ' ',
-        segundo: ' ',
-        terceiro: ' ',
-        quarto: ' ',
-        quinto: ' '
+        primero: '√x',
+        segundo: '',
+        terceiro: '¹/×',
+        quarto: 'ƒ',
+        quinto: 'π'
     }
     for (let i = 0; i < botoesVertical; i++) {
         for (let j = 0; j < botoesHorizontal; j++) {
@@ -155,9 +162,11 @@ document.getElementById('mais').addEventListener('click', () => {
 
                 //botao mais opcoes
                 if (i === 0 && j === 0) {
-                    botao00 = botao;
-                    botao.addEventListener('click', botao00click)
                     let click = 0
+                    botao.addEventListener('click', botao00click)
+                    const icone = document.createElement('i')
+                    icone.className = 'fas fa-clock'
+                    botao.appendChild(icone)
                     function botao00click() {
 
                         conteudoHistfixo.innerHTML = valorHist
@@ -178,7 +187,7 @@ document.getElementById('mais').addEventListener('click', () => {
                             Object.assign(histFixo.style, {
                                 background: 'none',
                                 height: '20vh',
-                                right: '0'
+                                right: '0',
                                 color: 'black'
 
                             })
@@ -192,11 +201,6 @@ document.getElementById('mais').addEventListener('click', () => {
                 botao.style.gridRow = i + 1;
                 botao.style.gridColumn = 1;
                 containerBotoes.style.gridTemplateRows = `repeat(${botoesVertical}, 1fr)`;
-            }
-            if (i === 0 && j === 0) {
-                const icone = document.createElement('i')
-                icone.className = 'fas fa-clock'
-                botao.appendChild(icone)
             }
             containerBotoes.appendChild(botao);
             if (contIr === 0) {
@@ -212,24 +216,71 @@ document.getElementById('mais').addEventListener('click', () => {
                 resultadoTela.style.height = '100vh'
                 historico.style.height = '25vh'
             }
-            if (i === 0 && j === 3) {
+
+            //add funcoes as teclas criadas quando a tecla mais e clicada
+            if(i === 0 && j === 1){
+                botao.addEventListener('click', () =>{
+                    insert('botao01')
+                })
+            } else if(i === 0 && j === 2){
+                botao.addEventListener('click', () =>{
+                    insert('botao02')
+                })
+            }else if (i === 0 && j === 3) {
                 botao.setAttribute('data-operador', '(')
                 const parentesesAb = botao.dataset.operador
                 botao.addEventListener('click', () => {
-                    insert(parentesesAb)
-                    parents++
+                    if (tela.innerHTML !== '') {
+                        insert(parentesesAb)
+                        parents++
+                        console.log(parents)
+                    }
+                    let penultimoValor = tela.innerHTML[tela.innerHTML.length - 2]
+                    let ultimoValor = tela.innerHTML[tela.innerHTML.length - 1]
+                    if (penultimoValor !== '/' && penultimoValor !== '*' && penultimoValor !== '-' && penultimoValor !== '+' && penultimoValor !== '(') {
+                        if (ultimoValor === '(') {
+                            let conteudo = tela.innerHTML;
+                            let arrayConteudo = Array.from(conteudo);
+                            arrayConteudo.splice(arrayConteudo.length - 1, 0, '*');
+                            tela.innerHTML = arrayConteudo.join('');
+                        }
+                    }
                 })
             } else if (i === 0 && j === 4) {
                 botao.setAttribute('data-operador', ')')
                 const parentesesfe = botao.dataset.operador
                 botao.addEventListener('click', () => {
-
                     if (parents > 0) {
                         insert(parentesesfe)
                         parents--
+                        console.log(parents)
                     } else {
                         return;
                     }
+                })
+            }
+            if(j=== 4 && i === 1){
+                botao.addEventListener('click', () =>{
+                    insert('botao01')
+                })
+            } else if(j=== 4 && i === 2){
+                botao.setAttribute('data-operador', '')
+                const botao02 = botao.dataset.operador
+                botao.innerHTML = 'x <sup >y</sup>'
+                botao.addEventListener('click', () =>{
+                    insert(botao02)
+                })
+            } else if(j=== 4 && i === 3){
+                botao.addEventListener('click', () =>{
+                    insert('botao03')
+                })
+            } else if(j=== 4 && i === 4){
+                botao.addEventListener('click', () =>{
+                    insert('ƒ')
+                })
+            } else if(j=== 4 && i === 5){
+                botao.addEventListener('click', () =>{
+                    insert('botao05')
                 })
             }
         }

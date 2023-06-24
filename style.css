@@ -131,3 +131,7 @@ button:hover{
     right: 0;
     color: black;
 }
+
+sup{
+    font-size: .6rem;
+}
