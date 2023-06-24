@@ -37,17 +37,18 @@ h3{
     font-size: 2rem;
     font-weight:500 ;
     overflow-wrap:break-word ;
-    padding-bottom: 2px;
+    /* padding-bottom: 2px; */
     height: 3rem;
     position: absolute;
-    bottom: 20px;
+    bottom: 25px;
     right: 0;
     z-index: 1;
+    width: 100%;
 }
 
 #previos{
     display: flex;
-    justify-content: end;
+    justify-content:  end;
     align-items: center;
     padding-right: 3px;
     overflow-wrap:break-word ;
@@ -56,20 +57,18 @@ h3{
     right: 0;
     z-index: 1;
     padding: 5px;
-    
+    width: 100%;
 }
 
 #historico{  
-    margin-top: -70px;
     overflow: hidden;
-    height: 25vh;
+    height: 35vh;
     font-size: 100%;
     display: flex;
     align-items: end;
     justify-content: end;
     color: #777;
     overflow: auto;
-
 }
 
 ::-webkit-scrollbar{
@@ -92,7 +91,6 @@ h3{
     display: grid;
     grid-template-columns: 1fr 1fr 1fr 1fr;
     gap: 2px;
-
 }
 
 .number{

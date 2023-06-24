@@ -11,18 +11,18 @@ function insert(value) {
     const tela = document.getElementById('tela');
     tela.innerHTML += value;
 }
+
 let contador = 0
 const num = document.getElementsByClassName('number')
 for (let i = 0; i < num.length; i++) {
     num[i].addEventListener('click', numClick)
 }
+
 function numClick(event) {
     const button = event.target
     const operator = button.dataset.operador
     const number = button.dataset.number
-
     const ultimoValor = tela.innerHTML.slice(-1)
-
     if (ultimoValor === '/' || ultimoValor === '*' || ultimoValor === '-' || ultimoValor === '+') {
         if (isNaN(number)) {
             return;
@@ -42,6 +42,7 @@ function numClick(event) {
     // Expressão regular para encontrar números na string
     let regexNumeros = /\d+(\.\d+)?/g;
     let numeros = expressao.match(regexNumeros);
+
     document.getElementById('porcentagem').addEventListener('click', () => {
         let penultimo = 0
         if (numeros.length >= 2) {
@@ -59,6 +60,7 @@ function numClick(event) {
     contador = 0
     contRes = 0
 }
+
 function clean() {
     previos.innerHTML = ''
     tela.innerHTML = ''
@@ -69,6 +71,7 @@ function clean() {
         contRes = 0
     }
 }
+
 function back() {
     tela.innerHTML = tela.innerHTML.slice(0, -1);
     previos.innerHTML = previos.innerHTML.slice(0, -1)
@@ -78,22 +81,29 @@ function back() {
 
 let valorHist = ''
 let contRes = 0
+let receptor = ''
 function calcular() {
-    var resultado = tela.innerHTML
-    tela.innerHTML = eval(resultado)
+    contRes++
+    var resultado = ''
+    if(tela.innerHTML !== ''){
+        resultado = tela.innerHTML
+        tela.innerHTML = eval(resultado)
+    }
     previos.innerHTML = tela.innerHTML
-    historico.innerHTML += '=' + resultado + '<br>'
-    historico.innerHTML += '=' + eval(resultado)
-
-    if(historico.innerHTML !== ''){
+    if (previos.innerHTML != '') {
+        receptor = '= ' + previos.innerHTML
+    }
+    historico.innerHTML += resultado + '<br>' + receptor + '<br>'
+    if (historico.innerHTML !== '') {
         valorHist = historico.innerHTML
-    }else{
+    } else {
         valorHist = null
     }
-
-    console.log(valorHist)
+    if(tela.innerHTML === ''){
+        historico.innerHTML = ''
+    }
     localStorage.getItem(valorHist, historico) || null;
-    contRes++
+
     contador = 0
     if (contRes === 2) {
         tela.innerHTML = ''
@@ -142,7 +152,8 @@ document.getElementById('mais').addEventListener('click', () => {
                 botao.style.gridRow = 1;
                 botao.style.gridColumn = j + 1;
                 containerBotoes.style.gridTemplateColumns = `repeat(${botoesHorizontal}, 1fr)`;
-    
+
+                //botao mais opcoes
                 if (i === 0 && j === 0) {
                     botao00 = botao;
                     botao.addEventListener('click', botao00click)
@@ -167,8 +178,7 @@ document.getElementById('mais').addEventListener('click', () => {
                             Object.assign(histFixo.style, {
                                 background: 'none',
                                 height: '20vh',
-                                right: '0',
-                                // top: '50px',
+                                right: '0'
                                 color: 'black'
 
                             })
@@ -190,13 +200,17 @@ document.getElementById('mais').addEventListener('click', () => {
             }
             containerBotoes.appendChild(botao);
             if (contIr === 0) {
-                resultadoTela.style.height = '50vh'
+                historico.style.height = '35vh'
+                resultadoTela.style.height = '100vh'
                 const botoes = document.getElementsByClassName('novosBotoes');
                 while (botoes.length > 0) {
                     botoes[0].parentNode.removeChild(botoes[0]);
                     containerBotoes.style.gridTemplateRows = 'repeat(5, 1fr)'
                     containerBotoes.style.gridTemplateColumns = 'repeat(4, 1fr)'
                 }
+            } else {
+                resultadoTela.style.height = '100vh'
+                historico.style.height = '25vh'
             }
             if (i === 0 && j === 3) {
                 botao.setAttribute('data-operador', '(')
