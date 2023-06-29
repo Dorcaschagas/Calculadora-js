@@ -10,26 +10,21 @@ let antesRaiz = ''
 let parents = 0
 let operadores = 0
 let numeros = 0
-
-var receberValores = true;
-
-let resultados = {
-    raizQuadrada: '',
-    resPorcentagem: '',
-    normal: ''
-}
-
 let contador = 0
-const num = document.getElementsByClassName('number')
-for (let i = 0; i < num.length; i++) {
-    num[i].addEventListener('click', numClick)
-}
 
+// Number button event listeners
+const num = document.getElementsByClassName('number');
+for (let i = 0; i < num.length; i++) {
+    num[i].addEventListener('click', numClick);
+}
+// Function to handle number button clicks
 function numClick(event) {
-    const button = event.target
-    const operator = button.dataset.operador
-    const number = button.dataset.number
-    const penultimoValor = tela.innerHTML.slice(-1)
+    const button = event.target;
+    const operator = button.dataset.operador;
+    const number = button.dataset.number;
+    const penultimoValor = tela.innerHTML.slice(-1);
+
+    // Check conditions for valid input
     if (penultimoValor === '/' || penultimoValor === '*' || penultimoValor === '-' || penultimoValor === '+') {
         if (isNaN(number)) {
             return;
@@ -39,50 +34,63 @@ function numClick(event) {
     } else if (penultimoValor === '(' && (operator === '/' || operator === '*' || operator === '+')) {
         return;
     }
+
+    // Append number or operator to 'tela' innerHTML
     if (number) {
-        tela.innerHTML += number
-        antesRaiz = tela.innerHTML
+        tela.innerHTML += number;
+        antesRaiz = tela.innerHTML;
     } else if (operator) {
-        tela.innerHTML += operator
-        antesRaiz = tela.innerHTML
+        tela.innerHTML += operator;
+        antesRaiz = tela.innerHTML;
     }
 
     let expressao = tela.innerHTML;
     let regexNumeros = /\d+(\.\d+)?/g;
     numeros = expressao.match(regexNumeros);
-    // Expressão regular para encontrar operadores
     let regexOperadores = /[+\-*/]/g;
     operadores = expressao.match(regexOperadores);
-
-    //porcentagem 
-    document.getElementById('porcentagem').addEventListener('click', () => {
-        let penultimo = 0
-        if (numeros.length >= 2) {
-            penultimo = numeros[numeros.length - 2];
-        }
-        let numeroFim = parseFloat(numeros.slice(-1)[0]);
-        penultimo = parseFloat(penultimo);
-        let porcentagem = (penultimo * numeroFim) / 100;
-        let porcentagemFormatada = porcentagem.toFixed(2);
-        let TelaConteudo = tela.innerHTML;
-        let novoConteudo = TelaConteudo.replace(/\d+(\.\d+)?$/, '') + porcentagemFormatada;
-        tela.innerHTML = novoConteudo;
-        resultados.resPorcentagem = eval(novoConteudo)
-    })
-
-    //raiz quadrada
-    const numAposRaiz = /√(\d+)(.*)/;
-    const resultado = numAposRaiz.exec(expressao);
-    let raizQuadrada = ''
-    if (resultado) {
-        let valorAposRaiz = resultado[resultado.length -2];
-        let operadoresAposRaiz = resultado[2];
-        let aposRaiz = valorAposRaiz + operadoresAposRaiz
-        let somandoRaiz = eval(aposRaiz)
-        let resultadoRaiz = Math.sqrt(somandoRaiz)
-        raizQuadrada = resultadoRaiz.toFixed(2)
+// Percentage button click event
+document.getElementById('porcentagem').addEventListener('click', () => {
+    let penultimo = 0;
+    // Retrieve the penultimate number from 'numeros' array
+    if (numeros.length >= 2) {
+        penultimo = numeros[numeros.length - 2];
     }
+    let numeroFim = parseFloat(numeros.slice(-1)[0]);
+    penultimo = parseFloat(penultimo);
+    let porcentagem = (numeroFim) / 100;
+    let porcentagemFormatada = porcentagem.toFixed(2);
+    let mult = porcentagemFormatada * penultimo
+    let sum =  penultimo + mult
+    let sub =  penultimo - mult 
+    let div =  (penultimo / numeroFim ) * 100
+    let TelaConteudo = tela.innerHTML;
+    let novoConteudo = TelaConteudo.replace(/\d+(\.\d+)?$/, '') + porcentagemFormatada;
+    tela.innerHTML = novoConteudo;
+    if(operadores[operadores.length -1] === '+'){
+        previos.innerHTML = sum
+    } else if(operadores[operadores.length -1] === '-'){
+        previos.innerHTML = sub
+    } else if(operadores[operadores.length -1] === '/'){
+        previos.innerHTML = div
+    } else {
+        previos.innerHTML = mult
+    }
+});
 
+// Square root calculations
+const numAposRaiz = /√(\d+)(.*)/;
+const resultado = numAposRaiz.exec(expressao);
+let raizQuadrada = '';
+// Check if the expression matches the square root pattern
+if (resultado) {
+    let valorAposRaiz = resultado[resultado.length - 2];
+    let operadoresAposRaiz = resultado[2];
+    let aposRaiz = valorAposRaiz + operadoresAposRaiz;
+    let somandoRaiz = eval(aposRaiz);
+    let resultadoRaiz = Math.sqrt(somandoRaiz);
+    raizQuadrada = resultadoRaiz.toFixed(2);
+}
     antesRaiz = tela.innerHTML
     let resdepoisRaiz = depoisRaiz.replace(/√/g, "") + raizQuadrada
     if(resultado){
