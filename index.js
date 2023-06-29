@@ -12,10 +12,9 @@ let operadores = 0
 let numeros = 0
 let contador = 0
 
-// Number button event listeners
-const num = document.getElementsByClassName('number');
+const num = document.getElementsByClassName('number')
 for (let i = 0; i < num.length; i++) {
-    num[i].addEventListener('click', numClick);
+    num[i].addEventListener('click', numClick)
 }
 // Function to handle number button clicks
 function numClick(event) {
