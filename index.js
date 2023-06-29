@@ -10,16 +10,8 @@ let antesRaiz = ''
 let parents = 0
 let operadores = 0
 let numeros = 0
-
-var receberValores = true;
-
-let resultados = {
-    raizQuadrada: '',
-    resPorcentagem: '',
-    normal: ''
-}
-
 let contador = 0
+
 const num = document.getElementsByClassName('number')
 for (let i = 0; i < num.length; i++) {
     num[i].addEventListener('click', numClick)
@@ -50,7 +42,6 @@ function numClick(event) {
     let expressao = tela.innerHTML;
     let regexNumeros = /\d+(\.\d+)?/g;
     numeros = expressao.match(regexNumeros);
-    // Expressão regular para encontrar operadores
     let regexOperadores = /[+\-*/]/g;
     operadores = expressao.match(regexOperadores);
 
