@@ -5,11 +5,18 @@ const mais = document.getElementById('mais')
 const containerBotoes = document.querySelector('.container-botoes')
 const histFixo = document.getElementById('historicoFixo')
 const conteudoHistfixo = document.getElementById('conteudoHistfixo')
+let depoisRaiz = ''
+let antesRaiz = ''
 let parents = 0
+let operadores = 0
+let numeros = 0
 
-function insert(value) {
-    const tela = document.getElementById('tela');
-    tela.innerHTML += value;
+var receberValores = true;
+
+let resultados = {
+    raizQuadrada: '',
+    resPorcentagem: '',
+    normal: ''
 }
 
 let contador = 0
@@ -18,33 +25,36 @@ for (let i = 0; i < num.length; i++) {
     num[i].addEventListener('click', numClick)
 }
 
-let numberParent = ''
 function numClick(event) {
     const button = event.target
     const operator = button.dataset.operador
     const number = button.dataset.number
-    numberParent = number
-    const ultimoValor = tela.innerHTML.slice(-1)
-    if (ultimoValor === '/' || ultimoValor === '*' || ultimoValor === '-' || ultimoValor === '+') {
+    const penultimoValor = tela.innerHTML.slice(-1)
+    if (penultimoValor === '/' || penultimoValor === '*' || penultimoValor === '-' || penultimoValor === '+') {
         if (isNaN(number)) {
             return;
         }
-    } else if (ultimoValor === '' && (operator === '/' || operator === '*' || operator === '+')) {
+    } else if (penultimoValor === '' && (operator === '/' || operator === '*' || operator === '+')) {
         return;
-    } else if (ultimoValor === '(' && (operator === '/' || operator === '*' || operator === '+')) {
+    } else if (penultimoValor === '(' && (operator === '/' || operator === '*' || operator === '+')) {
         return;
     }
     if (number) {
-        insert(number)
-        previos.innerHTML = eval(tela.innerHTML)
+        tela.innerHTML += number
+        antesRaiz = tela.innerHTML
     } else if (operator) {
-        insert(operator)
+        tela.innerHTML += operator
+        antesRaiz = tela.innerHTML
     }
-    let expressao = tela.innerHTML;
-    // Expressão regular para encontrar números na string
-    let regexNumeros = /\d+(\.\d+)?/g;
-    let numeros = expressao.match(regexNumeros);
 
+    let expressao = tela.innerHTML;
+    let regexNumeros = /\d+(\.\d+)?/g;
+    numeros = expressao.match(regexNumeros);
+    // Expressão regular para encontrar operadores
+    let regexOperadores = /[+\-*/]/g;
+    operadores = expressao.match(regexOperadores);
+
+    //porcentagem 
     document.getElementById('porcentagem').addEventListener('click', () => {
         let penultimo = 0
         if (numeros.length >= 2) {
@@ -57,8 +67,30 @@ function numClick(event) {
         let TelaConteudo = tela.innerHTML;
         let novoConteudo = TelaConteudo.replace(/\d+(\.\d+)?$/, '') + porcentagemFormatada;
         tela.innerHTML = novoConteudo;
-        previos.innerHTML = eval(tela.innerHTML);
+        resultados.resPorcentagem = eval(novoConteudo)
     })
+
+    //raiz quadrada
+    const numAposRaiz = /√(\d+)(.*)/;
+    const resultado = numAposRaiz.exec(expressao);
+    let raizQuadrada = ''
+    if (resultado) {
+        let valorAposRaiz = resultado[resultado.length -2];
+        let operadoresAposRaiz = resultado[2];
+        let aposRaiz = valorAposRaiz + operadoresAposRaiz
+        let somandoRaiz = eval(aposRaiz)
+        let resultadoRaiz = Math.sqrt(somandoRaiz)
+        raizQuadrada = resultadoRaiz.toFixed(2)
+    }
+
+    antesRaiz = tela.innerHTML
+    let resdepoisRaiz = depoisRaiz.replace(/√/g, "") + raizQuadrada
+    if(resultado){
+        previos.innerHTML = eval(resdepoisRaiz)
+    } else{
+        previos.innerHTML = eval(antesRaiz)
+    }
+
     contador = 0
     contRes = 0
 }
@@ -73,52 +105,24 @@ function clean() {
         contRes = 0
     }
 }
-
+let abrindo = 0
 function back() {
-    tela.innerHTML = tela.innerHTML.slice(0, -1);
-    if(tela.innerHTML.slice(-1) === '('){
+    abrindo = -1 + parents
+    if (tela.innerHTML.slice(-1) === '(') {
         parents--
-        console.log(parents)
     }
+    if (tela.innerHTML.slice(-1) === ')') {
+        parents++
+    }
+    tela.innerHTML = tela.innerHTML.slice(0, -1);
     previos.innerHTML = previos.innerHTML.slice(0, -1)
-    // console.log(innerHTML = previos.innerHTML.slice(0, -1))
-
     contador = 0
     contRes = 0
 }
-
 let valorHist = ''
 let contRes = 0
 let receptor = ''
-function calcular() {
-    contRes++
-    var resultado = ''
-    if (tela.innerHTML !== '') {
-        resultado = tela.innerHTML
-        tela.innerHTML = eval(resultado)
-    }
-    previos.innerHTML = tela.innerHTML
-    if (previos.innerHTML != '') {
-        receptor = '= ' + previos.innerHTML
-    }
-    historico.innerHTML += resultado + '<br>' + receptor + '<br>'
-    if (historico.innerHTML !== '') {
-        valorHist = historico.innerHTML
-    } else {
-        valorHist = null
-    }
-    if (tela.innerHTML === '') {
-        historico.innerHTML = ''
-    }
-    localStorage.getItem(valorHist, historico) || null;
 
-    contador = 0
-    if (contRes === 2) {
-        tela.innerHTML = ''
-        previos.innerHTML = ''
-        contRes = 0
-    }
-}
 let contIr = 0
 document.getElementById('mais').addEventListener('click', () => {
     const resultadoTela = document.querySelector('.resultadoTela');
@@ -216,73 +220,127 @@ document.getElementById('mais').addEventListener('click', () => {
                 resultadoTela.style.height = '100vh'
                 historico.style.height = '25vh'
             }
-
             //add funcoes as teclas criadas quando a tecla mais e clicada
-            if(i === 0 && j === 1){
-                botao.addEventListener('click', () =>{
-                    insert('botao01')
+            if (i === 0 && j === 1) {
+                botao.addEventListener('click', () => {
+                    tela.innerHTML += 'botao01'
                 })
-            } else if(i === 0 && j === 2){
-                botao.addEventListener('click', () =>{
-                    insert('botao02')
+            } else if (i === 0 && j === 2) {
+                botao.addEventListener('click', () => {
+                    tela.innerHTML += 'botao02'
                 })
-            }else if (i === 0 && j === 3) {
+            } else if (i === 0 && j === 3) {
                 botao.setAttribute('data-operador', '(')
                 const parentesesAb = botao.dataset.operador
                 botao.addEventListener('click', () => {
                     if (tela.innerHTML !== '') {
-                        insert(parentesesAb)
+                        tela.innerHTML += parentesesAb
+                        antesRaiz = tela.innerHTML
                         parents++
-                        console.log(parents)
                     }
                     let penultimoValor = tela.innerHTML[tela.innerHTML.length - 2]
                     let ultimoValor = tela.innerHTML[tela.innerHTML.length - 1]
-                    if (penultimoValor !== '/' && penultimoValor !== '*' && penultimoValor !== '-' && penultimoValor !== '+' && penultimoValor !== '(') {
+                    if (penultimoValor !== '/' && penultimoValor !== '*' && penultimoValor !== '-' && penultimoValor !== '+' && penultimoValor !== '(' && penultimoValor !== '√' ) {
                         if (ultimoValor === '(') {
                             let conteudo = tela.innerHTML;
                             let arrayConteudo = Array.from(conteudo);
                             arrayConteudo.splice(arrayConteudo.length - 1, 0, '*');
                             tela.innerHTML = arrayConteudo.join('');
+                            antesRaiz = tela.innerHTML
                         }
                     }
                 })
-            } else if (i === 0 && j === 4) {
+            }
+            if (i === 0 && j === 4) {
                 botao.setAttribute('data-operador', ')')
                 const parentesesfe = botao.dataset.operador
                 botao.addEventListener('click', () => {
                     if (parents > 0) {
-                        insert(parentesesfe)
+                        tela.innerHTML += parentesesfe
+                        antesRaiz = tela.innerHTML
                         parents--
-                        console.log(parents)
                     } else {
                         return;
                     }
                 })
             }
-            if(j=== 4 && i === 1){
-                botao.addEventListener('click', () =>{
-                    insert('botao01')
+            if (j === 4 && i === 1) {
+                botao.addEventListener('click', () => {
+                    if(tela.innerHTML === ''){
+                        tela.innerHTML += '√'
+                        depoisRaiz = tela.innerHTML
+                        antesRaiz = tela.innerHTML
+                    }else if(tela.innerHTML[tela.innerHTML.length -1] === numeros[numeros.length -1]){
+                        tela.innerHTML += '*√'
+                        depoisRaiz = tela.innerHTML
+                        antesRaiz = tela.innerHTML
+                    } else {
+                        if(tela.innerHTML[tela.innerHTML.length -1] === operadores[operadores.length -1]){
+                            tela.innerHTML += '√'
+                            depoisRaiz = tela.innerHTML
+                            antesRaiz = tela.innerHTML
+                        }
+                    }
                 })
-            } else if(j=== 4 && i === 2){
+
+            } else if (j === 4 && i === 2) {
                 botao.setAttribute('data-operador', '')
                 const botao02 = botao.dataset.operador
                 botao.innerHTML = 'x <sup >y</sup>'
-                botao.addEventListener('click', () =>{
-                    insert(botao02)
+                botao.addEventListener('click', () => {
+                    tela.innerHTML += botao02
                 })
-            } else if(j=== 4 && i === 3){
-                botao.addEventListener('click', () =>{
-                    insert('botao03')
+            } else if (j === 4 && i === 3) {
+                botao.addEventListener('click', () => {
+                    tela.innerHTML += 'botao03'
                 })
-            } else if(j=== 4 && i === 4){
-                botao.addEventListener('click', () =>{
-                    insert('ƒ')
+            } else if (j === 4 && i === 4) {
+                botao.addEventListener('click', () => {
+                    tela.innerHTML += 'ƒ'
                 })
-            } else if(j=== 4 && i === 5){
-                botao.addEventListener('click', () =>{
-                    insert('botao05')
+            } else if (j === 4 && i === 5) {
+                botao.addEventListener('click', () => {
+                    tela.innerHTML += 'botao05'
                 })
             }
+
         }
     }
 })
+
+function calcular() {
+    contRes++
+    if (typeof parents === 'number' && parents > 0) {
+        let fechandoParentheses = '';
+        for (let i = 0; i < parents; i++) {
+            fechandoParentheses = ')';
+        }
+        tela.innerHTML += fechandoParentheses;
+    }
+    var resultado = ''
+    if (tela.innerHTML !== '') {
+        resultado = tela.innerHTML
+        tela.innerHTML = eval(resultado)
+    }
+    previos.innerHTML = tela.innerHTML
+    if (previos.innerHTML != '') {
+        receptor = '= ' + previos.innerHTML
+    }
+    historico.innerHTML += resultado + '<br>' + receptor + '<br>'
+    if (historico.innerHTML !== '') {
+        valorHist = historico.innerHTML
+    } else {
+        valorHist = null
+    }
+    if (tela.innerHTML === '') {
+        historico.innerHTML = ''
+    }
+    localStorage.getItem(valorHist, historico) || null;
+
+    contador = 0
+    if (contRes === 2) {
+        tela.innerHTML = ''
+        previos.innerHTML = ''
+        contRes = 0
+    }
+}
