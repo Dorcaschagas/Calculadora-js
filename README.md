@@ -1,3 +1,3 @@
 # Calculadora
 clique aqui👇
-https://dorcaschagas.github.io/calc03/
+https://dorcaschagas.github.io/Calculadora/
