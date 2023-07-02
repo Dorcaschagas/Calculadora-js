@@ -5,7 +5,7 @@ const mais = document.getElementById('mais')
 const containerBotoes = document.querySelector('.container-botoes')
 const histFixo = document.getElementById('historicoFixo')
 const conteudoHistfixo = document.getElementById('conteudoHistfixo')
-let depoisRaiz = '', antesRaiz = '', entreParenteses = '', operadorAntes = '', resAntesParentes = '', resultadoParenteses = '', totalPrevios = '', numOperResParents = '', UltimoNumPrioridade = '', valoresSemPrioridade = '', valorComPrioridade = '', recebeVerda = '', resultPrioridade = '', resultaAntesPrioridade = '', oprJuncao = '', TamanhoUltimoNumero = ''
+let depoisRaiz = '', antesRaiz = '', totalPrevios = '', result = '', totPreviosTeste = ''
 let parents = 0, operadores = 0, numeros = 0, contador = 0, verdade = 0
 let entreParen = false
 
@@ -34,10 +34,8 @@ function numClick(event) {
     // Append number or operator to 'tela' innerHTML
     if (number) {
         tela.innerHTML += number;
-        // antesRaiz = tela.innerHTML;
     } else if (operator) {
         tela.innerHTML += operator;
-        // antesRaiz = tela.innerHTML;
     }
 
     let expressao = tela.innerHTML;
@@ -110,40 +108,13 @@ function numClick(event) {
         //testas sainda do comando acima
     }
 
-    if (entreParen !== true) {
-        //resultado sem parenteses
-        if(tela.innerHTML.slice(0,1) !== '√'){
-            antesRaiz = tela.innerHTML
-            if(antesRaiz[antesRaiz.length -1] !== operator){
-                resAntesParentes = eval(antesRaiz)
-                totalPrevios = resAntesParentes;
-                UltimoNumPrioridade = numeros[numeros.length -1]
-                TamanhoUltimoNumero =  UltimoNumPrioridade.length + 1
-            }
-        }
-    } else if (entreParen === true) {
-        entreParenteses += tela.innerHTML[tela.innerHTML.length - 1]
-        if (entreParenteses[entreParenteses.length - 1] === operator) {
-            return
-        } else {
-            resultadoParenteses = eval(entreParenteses)
-            totalPrevios =  resultadoParenteses
-        }
+    totPreviosTeste = tela.innerHTML
+    if(parents > 0){
+        totPreviosTeste += ')'.repeat(parents)
     }
-    if(operator){
-        oprJuncao = operator
-    }
-    if(operadorAntes === '*' || operadorAntes === '/'){
-        //pegando numero final mais operador '*' ou '/' e resultadoParents
-        numOperResParents = UltimoNumPrioridade + operadorAntes + resultadoParenteses
-        resultPrioridade = eval(numOperResParents)      
-        let valoresAntesPrioridade = antesRaiz.slice(0, -TamanhoUltimoNumero)
-        let resultadoAntesPrioridade = eval(valoresAntesPrioridade) 
-        let todosValoresPrioridade = resultadoAntesPrioridade + oprJuncao + resultPrioridade       
-        let resComprioridade = eval(todosValoresPrioridade)
-        previos.innerHTML = resComprioridade
-    } else {
-        previos.innerHTML = resAntesParentes
+    if(totPreviosTeste.slice(-1) !== operator){
+        result = eval(totPreviosTeste)
+        previos.innerHTML = result
     }
 
 
@@ -154,8 +125,8 @@ function numClick(event) {
 function clean() {
     previos.innerHTML = ''
     tela.innerHTML = ''
-    entreParenteses = ''
     totalPrevios = ''
+    totPreviosTeste = ''
     contador++
     if (contador >= 2) {
         historico.innerHTML = ''
@@ -174,8 +145,8 @@ function back() {
     }
     tela.innerHTML = tela.innerHTML.slice(0, -1);
     previos.innerHTML = previos.innerHTML.slice(0, -1)
-    entreParenteses = entreParenteses.slice(0, -1)
-    // totalPrevios = totalPrevios.slice(0, -1)
+    totalPrevios = totalPrevios.slice(0, -1)
+    totPreviosTeste = totPreviosTeste.slice(0, 1)
     contador = 0
     contRes = 0
 }
@@ -295,7 +266,7 @@ document.getElementById('mais').addEventListener('click', () => {
                 botao.addEventListener('click', () => {
                     if (tela.innerHTML !== '') {
                         tela.innerHTML += parentesesAb
-                        // antesRaiz = tela.innerHTML
+                        antesRaiz = tela.innerHTML
                         depoisRaiz = tela.innerHTML
                         parents++
                     }
@@ -309,20 +280,7 @@ document.getElementById('mais').addEventListener('click', () => {
                             arrayConteudo.splice(arrayConteudo.length - 1, 0, '*');
                             tela.innerHTML = arrayConteudo.join('');
                             depoisRaiz = tela.innerHTML
-                            //pegando operador antes do parenteses
-                            operadorAntes += tela.innerHTML[tela.innerHTML.length - 2]
-                            totalPrevios += operadorAntes
-                            if (tela.innerHTML[tela.innerHTML.length - 1] === '(') {
-                                return
-                            } else {
-                                entreParenteses = tela.innerHTML[tela.innerHTML.length - 1]
-                            }
                         }
-                    } else {
-                        //pegando operador antes do parenteses
-                        operadorAntes += penultimoValor
-                        totalPrevios += operadorAntes
-
                     }
                 })
             }
@@ -332,9 +290,8 @@ document.getElementById('mais').addEventListener('click', () => {
                 botao.addEventListener('click', () => {
                     if (parents > 0) {
                         tela.innerHTML += parentesesfe
-                        // antesRaiz = tela.innerHTML
+                        antesRaiz = tela.innerHTML
                         depoisRaiz = tela.innerHTML
-                        // console.log(eval(antesRaiz))
                         parents--
                     } else {
                         return;
@@ -348,26 +305,21 @@ document.getElementById('mais').addEventListener('click', () => {
                         tela.innerHTML += '√'
                         depoisRaiz = tela.innerHTML
                         antesRaiz = '√'
-                        // antesRaiz = tela.innerHTML
+                        antesRaiz = tela.innerHTML
                     } else if (tela.innerHTML[tela.innerHTML.length - 1] === numeros[numeros.length - 1]) {
                         tela.innerHTML += '*√'
                         depoisRaiz = tela.innerHTML
                         antesRaiz = '*√'
-                        // antesRaiz = tela.innerHTML
-                        operadorAntes += tela.innerHTML[tela.innerHTML.length - 2]
-                        totalPrevios += operadorAntes
+                        antesRaiz = tela.innerHTML
                     } else {
                         if (tela.innerHTML[tela.innerHTML.length - 1] === operadores[operadores.length - 1]) {
                             tela.innerHTML += '√'
                             depoisRaiz = tela.innerHTML
                             antesRaiz = '√'
                             antesRaiz = tela.innerHTML
-                            operadorAntes += tela.innerHTML[tela.innerHTML.length - 2]
-                            totalPrevios += operadorAntes
                         }
                     }
                 })
-
             } else if (j === 4 && i === 2) {
                 botao.setAttribute('data-operador', '')
                 const botao02 = botao.dataset.operador
@@ -388,14 +340,11 @@ document.getElementById('mais').addEventListener('click', () => {
                     // tela.innerHTML += 'botao05'
                 })
             }
-
         }
     }
 })
 function calcular() {
     // colocar  'totalPrevios =' nos previos
-
-
     contRes++
     if (typeof parents === 'number' && parents > 0) {
         let fechandoParentheses = '';
