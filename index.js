@@ -5,18 +5,10 @@ const mais = document.getElementById('mais')
 const containerBotoes = document.querySelector('.container-botoes')
 const histFixo = document.getElementById('historicoFixo')
 const conteudoHistfixo = document.getElementById('conteudoHistfixo')
-let depoisRaiz = ''
-let antesRaiz = ''
-let parents = 0
-let operadores = 0
-let numeros = 0
-let contador = 0
+let depoisRaiz = '', antesRaiz = '', entreParenteses = '', operadorAntes = '', resAntesParentes = '', resultadoParenteses = '', totalPrevios = '', numOperResParents = '', UltimoNumPrioridade = '', valoresSemPrioridade = '', valorComPrioridade = '', recebeVerda = '', resultPrioridade = '', resultaAntesPrioridade = '', oprJuncao = '', TamanhoUltimoNumero = ''
+let parents = 0, operadores = 0, numeros = 0, contador = 0, verdade = 0
 let entreParen = false
-let entreParenteses = ''
-let operadorAntes = ''
-let resultadoParenteses = ''
-let resultadoAntesRaizParenteses = ''
-let totalPrevios = ''
+
 const num = document.getElementsByClassName('number')
 for (let i = 0; i < num.length; i++) {
     num[i].addEventListener('click', numClick)
@@ -42,10 +34,10 @@ function numClick(event) {
     // Append number or operator to 'tela' innerHTML
     if (number) {
         tela.innerHTML += number;
-        antesRaiz = tela.innerHTML;
+        // antesRaiz = tela.innerHTML;
     } else if (operator) {
         tela.innerHTML += operator;
-        antesRaiz = tela.innerHTML;
+        // antesRaiz = tela.innerHTML;
     }
 
     let expressao = tela.innerHTML;
@@ -60,7 +52,6 @@ function numClick(event) {
         if (numeros.length >= 2) {
             penultimo = numeros[numeros.length - 2];
         }
-        console.log(penultimo)
         let numeroFim = parseFloat(numeros.slice(-1)[0]);
         penultimo = parseFloat(penultimo);
         let porcentagem = (numeroFim) / 100;
@@ -86,7 +77,6 @@ function numClick(event) {
             totalPrevios = mult
         }
     });
-
     // Square root calculations
     const numAposRaiz = /√(\d+)(.*)/;
     const resultado = numAposRaiz.exec(expressao);
@@ -95,17 +85,14 @@ function numClick(event) {
     if (resultado) {
         let valorAposRaiz = resultado[resultado.length - 2];
         operadoresAposRaiz = ''
-
-        // if(operadoresAposRaiz = resultado[2] === '('){
-        //     operadoresAposRaiz = resultado[0, -1];
-        //      console.log(operadoresAposRaiz)
-        // } else {
-        //     operadoresAposRaiz = resultado[2];
-        // }
+        if(operadoresAposRaiz = resultado[2] === '('){
+            operadoresAposRaiz = resultado[0, -1];
+        } else {
+            operadoresAposRaiz = resultado[2];
+        }
         let aposRaiz = valorAposRaiz + operadoresAposRaiz;
-        console.log(operadoresAposRaiz)
         let somandoRaiz = ''
-        if (tela.innerHTML[tela.innerHTML.length - 1] === '/' || tela.innerHTML[tela.innerHTML.length - 1] === '*' || tela.innerHTML[tela.innerHTML.length - 1] === '-' || tela.innerHTML[tela.innerHTML.length - 1] === '+' || tela.innerHTML[tela.innerHTML.length - 1] === '(') {
+        if (tela.innerHTML[tela.innerHTML.length - 1] === operator || tela.innerHTML[tela.innerHTML.length - 1] === '(') {
             return
         } else {
             somandoRaiz += eval(aposRaiz);
@@ -116,59 +103,51 @@ function numClick(event) {
 
         }
     }
-    if(totalPrevios){
-        totalPrevios = `${resultadoAntesRaizParenteses}` + `${operadorAntes}` + `${resultadoParenteses}` + `${operadorAntes}` + `${raizQuadrada}`
-        previos.innerHTML = eval(totalPrevios)
-    }
-
-
-    //operaçoes dentro dos parenteeses
-    if(entreParen === true){
-        entreParenteses += tela.innerHTML[tela.innerHTML.length -1]
-        if(entreParenteses[entreParenteses.length -1] === '/' || entreParenteses[entreParenteses.length -1] === '*' || entreParenteses[entreParenteses.length -1] === '-' || entreParenteses[entreParenteses.length -1] === '+'){
-            return
-        }else {
-            resultadoParenteses = eval(entreParenteses)
-            totalPrevios = resultadoParenteses
-        }
-    }
-
-
-
-    if(totalPrevios){
-        totalPrevios = `${resultadoAntesRaizParenteses}` + `${operadorAntes}` + `${resultadoParenteses}` + `${operadorAntes}` + `${raizQuadrada}`
-        previos.innerHTML = eval(totalPrevios)
-    }
-
-
-
-    if(entreParen !== true){
-        antesRaiz = tela.innerHTML
-    } else {
-        return
-    }
+    //resultado depois da raiz quadrada
     let resdepoisRaiz = depoisRaiz.replace(/√/g, "") + raizQuadrada
     if (resultado) {
         totalPrevios = eval(resdepoisRaiz)
-    } else if (antesRaiz[antesRaiz.length - 1] === '*' || antesRaiz[antesRaiz.length - 1] === '/' || antesRaiz[antesRaiz.length - 1] === '-' || antesRaiz[antesRaiz.length - 1] === '+') {
-        return
+        //testas sainda do comando acima
+    }
+
+    if (entreParen !== true) {
+        //resultado sem parenteses
+        if(tela.innerHTML.slice(0,1) !== '√'){
+            antesRaiz = tela.innerHTML
+            if(antesRaiz[antesRaiz.length -1] !== operator){
+                resAntesParentes = eval(antesRaiz)
+                totalPrevios = resAntesParentes;
+                UltimoNumPrioridade = numeros[numeros.length -1]
+                TamanhoUltimoNumero =  UltimoNumPrioridade.length + 1
+            }
+        }
+    } else if (entreParen === true) {
+        entreParenteses += tela.innerHTML[tela.innerHTML.length - 1]
+        if (entreParenteses[entreParenteses.length - 1] === operator) {
+            return
+        } else {
+            resultadoParenteses = eval(entreParenteses)
+            totalPrevios =  resultadoParenteses
+        }
+    }
+    if(operator){
+        oprJuncao = operator
+    }
+    if(operadorAntes === '*' || operadorAntes === '/'){
+        //pegando numero final mais operador '*' ou '/' e resultadoParents
+        numOperResParents = UltimoNumPrioridade + operadorAntes + resultadoParenteses
+        resultPrioridade = eval(numOperResParents)      
+        let valoresAntesPrioridade = antesRaiz.slice(0, -TamanhoUltimoNumero)
+        let resultadoAntesPrioridade = eval(valoresAntesPrioridade) 
+        let todosValoresPrioridade = resultadoAntesPrioridade + oprJuncao + resultPrioridade       
+        let resComprioridade = eval(todosValoresPrioridade)
+        previos.innerHTML = resComprioridade
     } else {
-        resultadoAntesRaizParenteses = eval(antesRaiz)
-        totalPrevios = resultadoAntesRaizParenteses
-    }
-    
-
-
-    if(totalPrevios){
-        totalPrevios = `${resultadoAntesRaizParenteses}` + `${operadorAntes}` + `${resultadoParenteses}` + `${operadorAntes}` + `${raizQuadrada}`
-        previos.innerHTML = eval(totalPrevios)
+        previos.innerHTML = resAntesParentes
     }
 
 
-
-
-
-    contador = 0 
+    contador = 0
     contRes = 0
 }
 
@@ -331,20 +310,18 @@ document.getElementById('mais').addEventListener('click', () => {
                             tela.innerHTML = arrayConteudo.join('');
                             depoisRaiz = tela.innerHTML
                             //pegando operador antes do parenteses
-                            operadorAntes += tela.innerHTML[tela.innerHTML.length-2]
+                            operadorAntes += tela.innerHTML[tela.innerHTML.length - 2]
                             totalPrevios += operadorAntes
-                            console.log('oper', operadorAntes)
-                            if(tela.innerHTML[tela.innerHTML.length-1] === '('){
+                            if (tela.innerHTML[tela.innerHTML.length - 1] === '(') {
                                 return
                             } else {
-                                entreParenteses = tela.innerHTML[tela.innerHTML.length-1]
+                                entreParenteses = tela.innerHTML[tela.innerHTML.length - 1]
                             }
                         }
                     } else {
                         //pegando operador antes do parenteses
                         operadorAntes += penultimoValor
                         totalPrevios += operadorAntes
-                        console.log('oper', operadorAntes)
 
                     }
                 })
@@ -366,26 +343,27 @@ document.getElementById('mais').addEventListener('click', () => {
             }
             if (j === 4 && i === 1) {
                 botao.addEventListener('click', () => {
-                    
+
                     if (tela.innerHTML === '') {
                         tela.innerHTML += '√'
                         depoisRaiz = tela.innerHTML
-                        antesRaiz = tela.innerHTML
+                        antesRaiz = '√'
+                        // antesRaiz = tela.innerHTML
                     } else if (tela.innerHTML[tela.innerHTML.length - 1] === numeros[numeros.length - 1]) {
                         tela.innerHTML += '*√'
                         depoisRaiz = tela.innerHTML
-                        antesRaiz = tela.innerHTML
-                        operadorAntes += tela.innerHTML[tela.innerHTML.length-2]
+                        antesRaiz = '*√'
+                        // antesRaiz = tela.innerHTML
+                        operadorAntes += tela.innerHTML[tela.innerHTML.length - 2]
                         totalPrevios += operadorAntes
-                        console.log('oper', operadorAntes)
                     } else {
                         if (tela.innerHTML[tela.innerHTML.length - 1] === operadores[operadores.length - 1]) {
                             tela.innerHTML += '√'
                             depoisRaiz = tela.innerHTML
+                            antesRaiz = '√'
                             antesRaiz = tela.innerHTML
-                            operadorAntes += tela.innerHTML[tela.innerHTML.length-2]
+                            operadorAntes += tela.innerHTML[tela.innerHTML.length - 2]
                             totalPrevios += operadorAntes
-                            console.log('oper', operadorAntes)
                         }
                     }
                 })
