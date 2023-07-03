@@ -5,7 +5,7 @@ const mais = document.getElementById('mais')
 const containerBotoes = document.querySelector('.container-botoes')
 const histFixo = document.getElementById('historicoFixo')
 const conteudoHistfixo = document.getElementById('conteudoHistfixo')
-let depoisRaiz = '', antesRaiz = '', totalPrevios = '', result = '', totPreviosTeste = ''
+let depoisRaiz = '', antesRaiz = '', totalPrevios = '', result = '', totPreviosTeste = '', resultadoRaiz = ''
 let parents = 0, operadores = 0, numeros = 0, contador = 0, verdade = 0
 let entreParen = false
 
@@ -43,6 +43,8 @@ function numClick(event) {
     numeros = expressao.match(regexNumeros);
     let regexOperadores = /[+\-*/]/g;
     operadores = expressao.match(regexOperadores);
+
+
     // Percentage button click event
     document.getElementById('porcentagem').addEventListener('click', () => {
         let penultimo = 0;
@@ -75,53 +77,60 @@ function numClick(event) {
             totalPrevios = mult
         }
     });
+
+       //dentro da raiz
     // Square root calculations
     const numAposRaiz = /√(\d+)(.*)/;
     const resultado = numAposRaiz.exec(expressao);
-    let raizQuadrada = '';
-    // Check if the expression matches the square root pattern
+    let operadoresAposRaiz = ''
     if (resultado) {
         let valorAposRaiz = resultado[resultado.length - 2];
-        operadoresAposRaiz = ''
-        if(operadoresAposRaiz = resultado[2] === '('){
-            operadoresAposRaiz = resultado[0, -1];
-        } else {
-            operadoresAposRaiz = resultado[2];
-        }
+        operadoresAposRaiz = resultado[2];
         let aposRaiz = valorAposRaiz + operadoresAposRaiz;
-        let somandoRaiz = ''
-        if (tela.innerHTML[tela.innerHTML.length - 1] === operator || tela.innerHTML[tela.innerHTML.length - 1] === '(') {
-            return
-        } else {
-            somandoRaiz += eval(aposRaiz);
-            let resultadoRaiz = Math.sqrt(somandoRaiz);
-            raizQuadrada = resultadoRaiz.toFixed(2);
-            totalPrevios = raizQuadrada
-            previos.innerHTML = totalPrevios
-
+        if(parents > 0){
+            aposRaiz += ')'.repeat(parents)
+        }
+        if(aposRaiz.slice(-1) !== operator && aposRaiz.slice(-1) !== ')'){
+            result = eval(aposRaiz)
+            resultadoRaiz = Math.sqrt(result);
+            previos.innerHTML = resultadoRaiz
+        } else if(aposRaiz[aposRaiz.length -(1 + parents)] !== operator && aposRaiz.slice(-1) === ')'){
+            result = eval(aposRaiz)
+            resultadoRaiz = Math.sqrt(result);
+            previos.innerHTML = resultadoRaiz
+        } 
+    }
+    if(!tela.innerHTML.includes('√')){
+        if(tela.innerHTML.slice(-1) !== '√'){
+            totPreviosTeste = tela.innerHTML
+            if(parents > 0){
+                totPreviosTeste += ')'.repeat(parents)
+            }
+            if(totPreviosTeste.slice(-1) !== operator && totPreviosTeste.slice(-1) !== ')'){
+                result = eval(totPreviosTeste)
+                previos.innerHTML = result
+            } else {
+                if(totPreviosTeste[totPreviosTeste.length -(1 + parents)] !== operator){
+                    result = eval(totPreviosTeste);
+                    previos.innerHTML = result
+                }
+            }
         }
     }
-    //resultado depois da raiz quadrada
-    let resdepoisRaiz = depoisRaiz.replace(/√/g, "") + raizQuadrada
-    if (resultado) {
-        totalPrevios = eval(resdepoisRaiz)
-        //testas sainda do comando acima
-    }
 
-    totPreviosTeste = tela.innerHTML
+    //resultado antes + depois da raiz quadrada
+    let resAntesDepoisRaiz = depoisRaiz.replace(/√/g, "") + resultadoRaiz
     if(parents > 0){
-        totPreviosTeste += ')'.repeat(parents)
+        resAntesDepoisRaiz += ')'.repeat(parents)
     }
-    if(totPreviosTeste.slice(-1) !== operator){
-        result = eval(totPreviosTeste)
-        previos.innerHTML = result
+    if (resultado) {
+        let antesDepoisRz = eval(resAntesDepoisRaiz)
+        previos.innerHTML = antesDepoisRz
     }
-
 
     contador = 0
     contRes = 0
 }
-
 function clean() {
     previos.innerHTML = ''
     tela.innerHTML = ''
