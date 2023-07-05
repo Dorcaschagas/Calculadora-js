@@ -5,7 +5,7 @@ const mais = document.getElementById('mais')
 const containerBotoes = document.querySelector('.container-botoes')
 const histFixo = document.getElementById('historicoFixo')
 const conteudoHistfixo = document.getElementById('conteudoHistfixo')
-let depoisRaiz = '', antesRaiz = '', totalPrevios = '', result = '', totPreviosTeste = '', resultadoRaiz = ''
+let depoisRaiz = '', antesRaiz = '', result = '', totPreviosTeste = '', resultadoRaiz = '', resTelaPocentagem = ''
 let parents = 0, operadores = 0, numeros = 0, contador = 0, verdade = 0
 let entreParen = false
 
@@ -36,6 +36,7 @@ function numClick(event) {
         tela.innerHTML += number;
     } else if (operator) {
         tela.innerHTML += operator;
+
     }
 
     let expressao = tela.innerHTML;
@@ -43,43 +44,9 @@ function numClick(event) {
     numeros = expressao.match(regexNumeros);
     let regexOperadores = /[+\-*/]/g;
     operadores = expressao.match(regexOperadores);
-
-
-    // Percentage button click event
-    document.getElementById('porcentagem').addEventListener('click', () => {
-        let penultimo = 0;
-        // Retrieve the penultimate number from 'numeros' array
-        if (numeros.length >= 2) {
-            penultimo = numeros[numeros.length - 2];
-        }
-        let numeroFim = parseFloat(numeros.slice(-1)[0]);
-        penultimo = parseFloat(penultimo);
-        let porcentagem = (numeroFim) / 100;
-        let porcentagemFormatada = porcentagem.toFixed(2);
-        let mult = porcentagemFormatada * penultimo
-        let sum = penultimo + mult
-        let sub = penultimo - mult
-        let div = (penultimo / numeroFim) * 100
-        let TelaConteudo = tela.innerHTML;
-        let novoConteudo = TelaConteudo.replace(/\d+(\.\d+)?$/, '') + porcentagemFormatada;
-        tela.innerHTML = novoConteudo;
-        if (operadores[operadores.length - 1] === '+') {
-            previos.innerHTML = sum
-            totalPrevios = sum
-        } else if (operadores[operadores.length - 1] === '-') {
-            previos.innerHTML = sub
-            totalPrevios = sub
-        } else if (operadores[operadores.length - 1] === '/') {
-            previos.innerHTML = div
-            totalPrevios = div
-        } else {
-            previos.innerHTML = mult
-            totalPrevios = mult
-        }
-    });
-
-       //dentro da raiz
-    // Square root calculations
+    
+    
+    //dentro da raiz
     const numAposRaiz = /√(\d+)(.*)/;
     const resultado = numAposRaiz.exec(expressao);
     let operadoresAposRaiz = ''
@@ -87,46 +54,156 @@ function numClick(event) {
         let valorAposRaiz = resultado[resultado.length - 2];
         operadoresAposRaiz = resultado[2];
         let aposRaiz = valorAposRaiz + operadoresAposRaiz;
-        if(parents > 0){
+        if (parents > 0) {
             aposRaiz += ')'.repeat(parents)
         }
-        if(aposRaiz.slice(-1) !== operator && aposRaiz.slice(-1) !== ')'){
+        if (aposRaiz.slice(-1) !== operator && aposRaiz.slice(-1) !== ')') {
             result = eval(aposRaiz)
             resultadoRaiz = Math.sqrt(result);
-            previos.innerHTML = resultadoRaiz
-        } else if(aposRaiz[aposRaiz.length -(1 + parents)] !== operator && aposRaiz.slice(-1) === ')'){
+            totPreviosTeste = resultadoRaiz
+            // previos.innerHTML = resultadoRaiz;
+        } else if (aposRaiz[aposRaiz.length - (1 + parents)] !== operator && aposRaiz.slice(-1) === ')') {
             result = eval(aposRaiz)
             resultadoRaiz = Math.sqrt(result);
-            previos.innerHTML = resultadoRaiz
-        } 
+            totPreviosTeste = resultadoRaiz
+            // previos.innerHTML = resultadoRaiz
+        }
     }
-    if(!tela.innerHTML.includes('√')){
-        if(tela.innerHTML.slice(-1) !== '√'){
+    if (!tela.innerHTML.includes('√')) {
+        if (tela.innerHTML.slice(-1) !== '√') {
             totPreviosTeste = tela.innerHTML
-            if(parents > 0){
+            if (parents > 0) {
                 totPreviosTeste += ')'.repeat(parents)
             }
-            if(totPreviosTeste.slice(-1) !== operator && totPreviosTeste.slice(-1) !== ')'){
+            if (totPreviosTeste.slice(-1) !== operator && totPreviosTeste.slice(-1) !== ')') {
                 result = eval(totPreviosTeste)
-                previos.innerHTML = result
+                totPreviosTeste = result.toFixed(2)
+                // previos.innerHTML = result.toFixed(2)
             } else {
-                if(totPreviosTeste[totPreviosTeste.length -(1 + parents)] !== operator){
+                if (totPreviosTeste[totPreviosTeste.length - (1 + parents)] !== operator) {
                     result = eval(totPreviosTeste);
-                    previos.innerHTML = result
+                    totPreviosTeste = result.toFixed(2)
+                    // previos.innerHTML = result.toFixed(2)
                 }
             }
         }
     }
-
     //resultado antes + depois da raiz quadrada
     let resAntesDepoisRaiz = depoisRaiz.replace(/√/g, "") + resultadoRaiz
-    if(parents > 0){
+    if (parents > 0) {
         resAntesDepoisRaiz += ')'.repeat(parents)
     }
     if (resultado) {
         let antesDepoisRz = eval(resAntesDepoisRaiz)
-        previos.innerHTML = antesDepoisRz
+        totPreviosTeste = antesDepoisRz
+        // previos.innerHTML = antesDepoisRz
     }
+    
+
+    function obterConteudoAposParentese(expressao) {
+        let contadorParenteses = 0;
+        let conteudoAposParentese = '';
+
+        for (let i = 0; i < expressao.length; i++) {
+            if (expressao[i] === '(') {
+                contadorParenteses++
+
+                if (contadorParenteses === parents) {
+                    let j = i + 1;
+                    while (j < expressao.length && expressao[j] !== ')') {
+                        conteudoAposParentese += expressao[j];
+                        j++;
+                        contador++
+                    }
+                    break;
+                }
+            }
+        }
+        return conteudoAposParentese;
+    }
+    let exp = totPreviosTeste
+    let conteudoAposParentese = obterConteudoAposParentese(exp);
+//  
+// 
+// 
+//          porcentagem sem parenteses
+// 
+//     
+// 
+//     
+    let tamNum = numeros[numeros.length - 1]
+    let numSemUltimoNum = tela.innerHTML.slice(0, -`${tamNum.length}`)
+    console.log(numSemUltimoNum)
+    let resAntesPorct = ''
+    if(operator){
+        resAntesPorct = eval(numSemUltimoNum)
+    } 
+    console.log(resAntesPorct,'res antes porc')
+
+    ultimoNum = numeros.slice(-1) / 100
+    let porcentagemUltimoNum = ''
+    if(resAntesPorct > 1){
+        porcentagemUltimoNum = resAntesPorct * ultimoNum.toFixed(2)
+    }
+
+    if( operator === '-' || operator === '+') {
+        novoConteudo = tela.innerHTML.replace(/\d+(\.\d+)?$/, '') + porcentagemUltimoNum.toFixed(2)
+        let addParentestes = novoConteudo + ')'.repeat(parents)
+        let res = eval(addParentestes)
+        previos.innerHTML = res.toFixed(2)
+        tela.innerHTML = novoConteudo
+    } else if(operator === '*' || operator === '/'){
+        novoConteudo = tela.innerHTML.replace(/\d+(\.\d+)?$/, '') + ultimoNum
+        let addParentestes = novoConteudo + ')'.repeat(parents)
+        let res = eval(addParentestes)
+        previos.innerHTML = res.toFixed(2)
+        tela.innerHTML = novoConteudo
+    }
+
+// 
+// 
+// 
+//          porcentagem sem parenteses
+// 
+// 
+// 
+//     
+    document.getElementById('porcentagem').addEventListener('click', () => {
+        if(parents === 0){
+    
+        } else {
+            let tamNum = numeros[numeros.length - 1]
+            let numSemUltimoNum = conteudoAposParentese.slice(0, -`${tamNum.length}`)
+    
+            let resAntesPorct = ''
+            if(numSemUltimoNum.slice(-1) !== '/'|| numSemUltimoNum.slice(-1) !== '*'|| numSemUltimoNum.slice(-1) !== '-'|| numSemUltimoNum.slice(-1) !== '+'){
+                resAntesPorct = eval(numSemUltimoNum)
+            } 
+      
+            ultimoNum = numeros.slice(-1) / 100
+            let porcentagemUltimoNum = ''
+            if(resAntesPorct > 1){
+                porcentagemUltimoNum = resAntesPorct * ultimoNum.toFixed(2)
+            }
+    
+            if( operator === '-' || operator === '+') {
+                novoConteudo = tela.innerHTML.replace(/\d+(\.\d+)?$/, '') + porcentagemUltimoNum.toFixed(2)
+                let addParentestes = novoConteudo + ')'.repeat(parents)
+                let res = eval(addParentestes)
+                previos.innerHTML = res.toFixed(2)
+                tela.innerHTML = novoConteudo
+            } else if(operator === '*' || operator === '/'){
+                novoConteudo = tela.innerHTML.replace(/\d+(\.\d+)?$/, '') + ultimoNum
+                let addParentestes = novoConteudo + ')'.repeat(parents)
+                let res = eval(addParentestes)
+                previos.innerHTML = res.toFixed(2)
+                tela.innerHTML = novoConteudo
+            }
+        }
+    });
+
+
+    // console.log(totPreviosTeste,'tot previos')//totos os valores antes da raiz
 
     contador = 0
     contRes = 0
@@ -134,7 +211,6 @@ function numClick(event) {
 function clean() {
     previos.innerHTML = ''
     tela.innerHTML = ''
-    totalPrevios = ''
     totPreviosTeste = ''
     contador++
     if (contador >= 2) {
@@ -154,7 +230,6 @@ function back() {
     }
     tela.innerHTML = tela.innerHTML.slice(0, -1);
     previos.innerHTML = previos.innerHTML.slice(0, -1)
-    totalPrevios = totalPrevios.slice(0, -1)
     totPreviosTeste = totPreviosTeste.slice(0, 1)
     contador = 0
     contRes = 0
@@ -382,7 +457,6 @@ function calcular() {
         historico.innerHTML = ''
     }
     localStorage.getItem(valorHist, historico) || null;
-
     contador = 0
     if (contRes === 2) {
         tela.innerHTML = ''
