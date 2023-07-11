@@ -149,20 +149,20 @@ function numClick(event) {
             numSemUltimoNum = conteudoAposParentese.slice(0, -`${tamNum.length}`)
             //se tiver apenas um numero depois do parenteses
             if (ultimoNum && numSemUltimoNum.length < 1 && !tela.innerHTML.includes('√')) {
-                if(!operator){
+                if(!operator){//ok
                     porcentagemUltimoNum = ultimoNum.toFixed(2)
                     let dentroParentes =  tela.innerHTML + ')'.repeat(parents)
                     previos.innerHTML = eval(dentroParentes).toFixed(2)
                 }
             } else if(!tela.innerHTML.includes('√')){// se tiver mais de um numero sem raiz
-                if(!operator){// se for '/' ou '*'
+                if(!operator){// se for '/' ou '*' 
                     if(operadores[operadores.length-1] === '*' || operadores[operadores.length-1] === '/'){
                         porcentagemUltimoNum = ultimoNum
                     } else {//se for + ou -
                         let entreParenteses = eval(numSemUltimoNum.slice(0, -1))   
                         porcentagemUltimoNum = ultimoNum * entreParenteses
                     }
-                }   
+                }  
             }// adicionando a tela
             tela.innerHTML = novoConteudo = tela.innerHTML.replace(/\d+(\.\d+)?$/, '') + porcentagemUltimoNum
 
