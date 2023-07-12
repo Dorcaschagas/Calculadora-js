@@ -10,8 +10,6 @@ let parents = 0, operadores = 0, numeros = 0, contador = 0, verdade = 0
 let aposPorcentagem = ''
 let valorDentroParentes = ''
 let recebendoOperador = []
-
-
 let respostaRaiz = ''
 const num = document.getElementsByClassName('number')
 for (let i = 0; i < num.length; i++) {
@@ -54,34 +52,8 @@ function numClick(event) {
     let regexOperadores = /[+\-*/]/g;
     operadores = expressao.match(regexOperadores);
 
-
-    // function obterConteudoAposParentese(expressao) {
-    //     let contadorParenteses = 0;
-    //     let conteudoAposParentese = '';
-
-    //     for (let i = 0; i < expressao.length; i++) {
-    //         if (expressao[i] === '(') {
-    //             contadorParenteses++
-
-    //             if (contadorParenteses === parents) {
-    //                 let j = i + 1;
-    //                 while (j < expressao.length && expressao[j] !== ')') {
-    //                     conteudoAposParentese += expressao[j];
-    //                     j++;
-    //                     contador++
-    //                 }
-    //                 break;
-    //             }
-    //         }
-    //     }
-    //     return conteudoAposParentese;
-    // }
-    // let exp = tela.innerHTML
-    // let conteudoAposParentese = obterConteudoAposParentese(exp);
-    // console.log(conteudoAposParentese)
-    
+    let conteudoAposParentese = ''
     let contadorParenteses = 0;
-    let conteudoAposParentese = '';
     for (let i = 0; i < tela.innerHTML.length; i++) {
         if(expressao[i] === '('){
             contadorParenteses++
@@ -163,29 +135,70 @@ function numClick(event) {
                         porcentagemUltimoNum = ultimoNum * entreParenteses
                     }
                 }  
-            }// adicionando a tela
-            tela.innerHTML = novoConteudo = tela.innerHTML.replace(/\d+(\.\d+)?$/, '') + porcentagemUltimoNum
+            }//tela com raiz, parenteses e porcentagem
+            if(tela.innerHTML.slice(0,1) ==='√' && tela.innerHTML.includes('(')){
+                let res1 = ''
+                if(recebeTela === true){
+                    res1 = conteudoTela.slice(1, -`${numeros.slice(-1).length + 1}`) + ')'.repeat(parents)
+                }
+                if(!operator){
+                    let res2 = ''
+                    if(numeros.length > 2 && conteudoAposParentese.length >= 3){
+                        res2 = eval(res1) * ultimoNum
+                    } else {
+                        res2 = numeros.slice(0,1) * ultimoNum
+                    }
+                    let res3 = ''
+                    let novoConteudo = ''
+
+                    if(operadores[operadores.length-1] === '*' || operadores[operadores.length-1] === '/'){//se for * ou /
+                        tela.innerHTML = novoConteudo = tela.innerHTML.replace(/\d+(\.\d+)?$/, '') + ultimoNum
+                        res3 = novoConteudo.slice(1) + ')'.repeat(parents) 
+                    } else if(operadores[operadores.length-1] === '-' || operadores[operadores.length-1] === '+'){//se for - ou +
+                        tela.innerHTML = novoConteudo = tela.innerHTML.replace(/\d+(\.\d+)?$/, '') + res2.toFixed(2)
+                        res3 = novoConteudo.slice(1) + ')'.repeat(parents) 
+                    }
+                    let res4 = Math.sqrt(eval(res3)).toFixed(2)
+                    previos.innerHTML = res4;
+                }
+            } else {
+                tela.innerHTML = novoConteudo = tela.innerHTML.replace(/\d+(\.\d+)?$/, '') + porcentagemUltimoNum
 
             //adicionando parenteses automaticamente no final
             let addParentestes = novoConteudo + ')'.repeat(parents)
             if(!operator){
                 previos.innerHTML = eval(addParentestes).toFixed(2)
             }
-
-            //raiz com parenteses e porcentagem
+            // raiz com parenteses e porcentagem
             aposPorcentagem = addParentestes
-            console.log(aposPorcentagem)
-
-
-
-
-            // adicionar aqui
-
+            }
         }
-
     });
     const numAposRaiz = /√(\d+)(.*)/;
     const resultado = numAposRaiz.exec(expressao)
+    if (resultado) {
+        let valorAposRaiz = resultado[resultado.length - 2];
+        aposRaiz = valorAposRaiz
+        if (parents > 0) {
+            aposRaiz += ')'.repeat(parents)
+        }
+        //raiz quadrada sem parenteses
+        if(!tela.innerHTML.includes('(')){
+            respostaRaiz = Math.sqrt(aposRaiz).toFixed(2)
+            previos.innerHTML = respostaRaiz
+        }
+    }// se tela iniciar com raiz quadrada e tiver parenteses
+    if(tela.innerHTML.slice(0,1) ==='√' && tela.innerHTML.includes('(')){
+        let res1 = tela.innerHTML.slice(1) + ')'.repeat(parents)
+        if(!operator){
+            let res2 = eval(res1)
+            let res3 = Math.sqrt(res2).toFixed(2)
+            previos.innerHTML = res3
+        }
+    }
+
+
+
 
     //     //    resultado antes + depois da raiz quadrada
     // let resAntesDepoisRaiz = depoisRaiz.replace(/√/g, "") + resultadoRaiz
@@ -200,23 +213,6 @@ function numClick(event) {
 
     // console.log(resAntesDepoisRaiz)
     // //dentro da raiz
-    
-    if (resultado) {
-        
-        let valorAposRaiz = resultado[resultado.length - 2];
-        aposRaiz = valorAposRaiz
-        if (parents > 0) {
-            aposRaiz += ')'.repeat(parents)
-        }
-
-        if(!tela.innerHTML.includes('(')){
-            respostaRaiz = Math.sqrt(aposRaiz).toFixed(2)
-            previos.innerHTML = respostaRaiz
-        } else {
-
-            //incluir aqui valor com com parenteses
-        }
-    }
 
     contador = contRes = 0
 }
