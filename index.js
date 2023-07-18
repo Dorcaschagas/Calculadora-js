@@ -5,8 +5,8 @@ const mais = document.getElementById('mais')
 const containerBotoes = document.querySelector('.container-botoes')
 const histFixo = document.getElementById('historicoFixo')
 const conteudoHistfixo = document.getElementById('conteudoHistfixo')
-let parents = 0, operadores = 0, numeros = 0, contador = 0
-let depoisRaiz = '', antesRaiz = '', result = '', totPreviosTeste = '', resultadoRaiz = '', porcentagemUltimoNum = '', operatorGeral = '', aposRaiz = '', respostaRaiz = '',aposPorcentagem = ''
+let parents = 0, operadores = 0, numeros = 0, contador = 0, resRaizPorcentagem = 0
+let depoisRaiz = '', antesRaiz = '', result = '', totPreviosTeste = '', resultadoRaiz = '', porcentagemUltimoNum = '', operatorGeral = '', aposRaiz = '', respostaRaiz = '', aposPorcentagem = ''
 
 const num = document.getElementsByClassName('number')
 for (let i = 0; i < num.length; i++) {
@@ -39,9 +39,9 @@ function numClick(event) {
             previos.innerHTML = eval(tela.innerHTML).toFixed(2)
         }
         //resultados quando houver parenteses
-    } else if(!tela.innerHTML.includes('√') && tela.innerHTML.includes('(')){
+    } else if (!tela.innerHTML.includes('√') && tela.innerHTML.includes('(')) {
         let res = tela.innerHTML + ')'.repeat(parents)
-        if(!operator){
+        if (!operator) {
             previos.innerHTML = eval(res)
         }
     }
@@ -67,6 +67,61 @@ function numClick(event) {
             }
         }
     }
+
+    // }// se tela iniciar com raiz quadrada e tiver parenteses
+    if (tela.innerHTML.slice(0, 1) === '√' && tela.innerHTML.includes('(')) {
+        let res1 = tela.innerHTML.slice(1) + ')'.repeat(parents)
+        if (!operator) {
+            let res2 = eval(res1)
+            let res3 = Math.sqrt(res2).toFixed(2)
+            respostaRaiz = res3
+            previos.innerHTML = respostaRaiz
+        }
+    }
+
+    //raiz quadrada
+    tela02 = tela.innerHTML;
+    // Encontrar e armazenar os valores após os símbolos de raiz
+    let valores = tela02.match(/√(\d+)/g);
+    let valoresRemovidos = [];
+    let respostaRaiz02 = [];
+
+    if (tela.innerHTML.includes('√')) {
+        valoresRemovidos = valores.map(valor => valor.substring(1));
+        respostaRaiz02 = valoresRemovidos.map(element => {
+            const valorNumerico = parseFloat(element);
+            return valorNumerico > 0 ? Math.sqrt(valorNumerico).toFixed(2) : element;
+        });
+    }
+
+    let resultadoT02 = tela02;
+    for (let i = 0; i < valoresRemovidos.length; i++) {
+        resultadoT02 = resultadoT02.replace(/√\d+/, respostaRaiz02[i])
+    }
+
+    // Remover símbolos de raiz e substituir pelos resultados
+    let res03 = resultadoT02 + ')'.repeat(parents);
+    respostaRaiz = res03;
+    console.log(respostaRaiz); //tela para resultado final
+    previos.innerHTML = eval(respostaRaiz).toFixed(2)
+
+
+
+    //parenteses
+
+
+    // let telaP = res03
+    // let valRemovParent = []
+    // // Encontrar e armazenar os valores dentro dos parênteses
+    // let regex = /\(([^()]+)\)/g;
+
+    // let resultado = telaP.replace(regex, (match, valor) => {
+    //   valRemovParent.push(valor);
+    //   return "";
+    // });
+
+    // console.log("Valores removidos: ", valRemovParent);
+    // console.log("Resultado: ", resultado);
     let conteudoTela = tela.innerHTML
     let recebeTela = false
     document.getElementById('porcentagem').addEventListener('click', () => {
@@ -78,7 +133,7 @@ function numClick(event) {
         let novoConteudo = ''
         //sem parenteses
         if (parents === 0) {
-            if(recebeTela === true){
+            if (recebeTela === true) {
                 numSemUltimoNum = tela.innerHTML.slice(0, -`${tamNum.length + 1}`)
             }
             // se tiver apenas um numero na tela sem raiz quadrada
@@ -86,15 +141,15 @@ function numClick(event) {
                 porcentagemUltimoNum = ultimoNum.toFixed(2)
                 tela.innerHTML = novoConteudo = tela.innerHTML.replace(/\d+(\.\d+)?$/, '') + porcentagemUltimoNum  //ok
 
-                //raiz quadrada com porcentagem
+                //apenas raiz quadrada com porcentagem 
                 if (novoConteudo.slice(0, 1) === '√') {
-                    let resRaizPorcentagem = respostaRaiz / 10
+                    resRaizPorcentagem = respostaRaiz02 / 10
                     previos.innerHTML = resRaizPorcentagem
                 }
             }
             //sem (raiz e parenteses) e com mais de um numero na tela
-            if (!tela.innerHTML.includes('√') && !tela.innerHTML.includes('(') && 
-            numSemUltimoNum.length > 0) {
+            if (!tela.innerHTML.includes('√') && !tela.innerHTML.includes('(') &&
+                numSemUltimoNum.length > 0) {
                 //selecionando os primeiros numeros e so recebe tela 1x
                 if (recebeTela === true) {
                     numSemUltimoNum = conteudoTela.slice(0, -`${numeros.slice(-1).length + 1}`)
@@ -105,7 +160,7 @@ function numClick(event) {
                 }
                 let divMulti = ultimoNum
                 let SumSub = 0
-                if(totalSemUltimo){
+                if (totalSemUltimo) {
                     SumSub = (totalSemUltimo / 100) * numeros.slice(-1)
                 }
 
@@ -155,12 +210,12 @@ function numClick(event) {
                     }
                     let res3 = ''
                     let novoConteudo = ''
-                    if(res1 === ')'){
+                    if (res1 === ')') {
                         let res0 = Math.sqrt(conteudoAposParentese / 100)
                         previos.innerHTML = res0
                     } else {
                         if (operadores[operadores.length - 1] === '*' || operadores[operadores.length - 1] === '/') {//se for * ou /
-                            tela.innerHTML = novoConteudo = tela.innerHTML.replace(/\d+(\.\d+)?$/, '') + ultimoNum
+                            tela.innerHTML = novoConteudo = tela.innerHTML.replace(/\d+(\.\d+)?$/, '') + ultimoNum.toFixed(2)
                             res3 = novoConteudo.slice(1) + ')'.repeat(parents)
                         } else if (operadores[operadores.length - 1] === '-' || operadores[operadores.length - 1] === '+') {//se for - ou +
                             tela.innerHTML = novoConteudo = tela.innerHTML.replace(/\d+(\.\d+)?$/, '') + res2.toFixed(2)
@@ -181,65 +236,11 @@ function numClick(event) {
             }
         }
     });
-    const numAposRaiz = /√(\d+)(.*)/;
-    const resultado = numAposRaiz.exec(expressao)
-    if (resultado) {
-        let valorAposRaiz = resultado[resultado.length - 2];
-        aposRaiz = valorAposRaiz
-        if (parents > 0) {
-            aposRaiz += ')'.repeat(parents)
-        }
-        //raiz quadrada sem parenteses
-        if (!tela.innerHTML.includes('(')) {
-            respostaRaiz = Math.sqrt(aposRaiz).toFixed(2)
-            previos.innerHTML = respostaRaiz
-        }
-    }// se tela iniciar com raiz quadrada e tiver parenteses
-    if (tela.innerHTML.slice(0, 1) === '√' && tela.innerHTML.includes('(')) {
-        let res1 = tela.innerHTML.slice(1) + ')'.repeat(parents)
-        if (!operator) {
-            let res2 = eval(res1)
-            let res3 = Math.sqrt(res2).toFixed(2)
-            respostaRaiz = res3
-            previos.innerHTML = respostaRaiz
-        }
-    }
-        //    resultado antes + depois da raiz quadrada
-    let resAntesDepoisRaiz = depoisRaiz.replace(/√/g, "") + resultadoRaiz
-    // if (parents > 0) {
-    //     resAntesDepoisRaiz += ')'.repeat(parents)
-    // }
-    // // if (resultado) {
-    // //     let antesDepoisRz = eval(resAntesDepoisRaiz)
-    // //     totPreviosTeste = antesDepoisRz
-    // //     previos.innerHTML = antesDepoisRz
-    // // }
-
-    // console.log(resAntesDepoisRaiz)
-    // //dentro da raiz
-
-    let recebeTelaGeral = []
-    let indice = 0
-    let indiceRaiz = -1;
-    for (let i = 0; i < tela.innerHTML.length; i++) {
-        recebeTelaGeral.push(tela.innerHTML[i])
-        if(tela.innerHTML[i] === '√'){
-            indice = recebeTelaGeral.indexOf('√')
-            recebeTelaGeral.splice(indice, 2)
-            recebeTelaGeral.splice(indice, 1, respostaRaiz) 
-            indiceRaiz = i;
-        } 
-        if(indiceRaiz !== -1){
-            let deposRaiznumeros = recebeTelaGeral.slice(-1)
-            if(operadores){
-                indiceRaiz = -1
-            }
-        }
-    }
-    console.log(recebeTelaGeral)    
 
     contador = contRes = 0
 }
+
+
 function clean() {
     //limpa a tela e outros
     previos.innerHTML = tela.innerHTML = totPreviosTeste = ''
